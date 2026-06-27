@@ -34,6 +34,30 @@ function WhatsAppIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+  );
+}
+
+function AlertIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
 export default function OrderCard({ order, alias }: OrderCardProps) {
   const router = useRouter();
   const [modal, setModal] = useState<"rechazado" | "parcial" | null>(null);
@@ -75,9 +99,9 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm">
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <p className="font-semibold text-[var(--foreground)] text-base">{order.customer_name}</p>
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="min-w-0">
+          <p className="font-semibold text-[var(--foreground)] text-base truncate">{order.customer_name}</p>
           <a
             href={`https://wa.me/${order.customer_phone}`}
             target="_blank"
@@ -85,34 +109,35 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
             className="text-sm text-[var(--primary)] hover:underline inline-flex items-center gap-1"
           >
             <WhatsAppIcon />
-            {order.customer_phone}
+            <span className="truncate">{order.customer_phone}</span>
           </a>
-          <p className="text-sm text-[var(--accent)] mt-0.5">
-            {new Date(order.created_at).toLocaleDateString("es-AR", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
           {order.delivery && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide">
-              Delivery
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide">
+              D
             </span>
           )}
-          <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${statusClass}`}>
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${statusClass}`}>
             {STATUS_LABELS[order.status] ?? order.status}
           </span>
         </div>
       </div>
 
+      <p className="text-xs text-[var(--accent)] mb-2">
+        {new Date(order.created_at).toLocaleDateString("es-AR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
+
       <p className="text-xl font-bold text-[var(--primary)]">{formatPrice(order.total)}</p>
 
       {order.admin_message && (
-        <p className="text-base text-[var(--accent)] mt-2 italic bg-[var(--primary-light)]/10 p-2 rounded-lg">
+        <p className="text-sm text-[var(--accent)] mt-2 italic bg-[var(--primary-light)]/10 p-2 rounded-lg">
           {order.admin_message}
         </p>
       )}
@@ -122,23 +147,26 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
           <button
             onClick={handleApprove}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
+            className="flex-1 min-h-[44px] rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 text-sm font-semibold"
           >
-            Aprobar
+            <CheckIcon />
+            <span className="hidden sm:inline">Aprobar</span>
           </button>
           <button
             onClick={() => setModal("parcial")}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors disabled:opacity-50"
+            className="flex-1 min-h-[44px] rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 text-sm font-semibold"
           >
-            Parcial
+            <AlertIcon />
+            <span className="hidden sm:inline">Parcial</span>
           </button>
           <button
             onClick={() => setModal("rechazado")}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors disabled:opacity-50"
+            className="flex-1 min-h-[44px] rounded-full bg-red-100 text-red-700 hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 text-sm font-semibold"
           >
-            Rechazar
+            <XIcon />
+            <span className="hidden sm:inline">Rechazar</span>
           </button>
         </div>
       )}

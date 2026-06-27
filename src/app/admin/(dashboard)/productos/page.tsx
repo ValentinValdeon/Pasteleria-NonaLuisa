@@ -202,7 +202,7 @@ export default function ProductosPage() {
               <FilterIcon />
             </button>
             {filterOpen && (
-              <div className="absolute top-full left-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
+              <div className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
                 <button
                   onClick={() => { setFilterCat(""); setFilterOpen(false); }}
                   className={`w-full text-left px-3 py-2 text-sm transition-colors ${
@@ -240,7 +240,22 @@ export default function ProductosPage() {
       </div>
 
       {loading ? (
-        <p className="text-[var(--accent)]">Cargando...</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4">
+              <div className="w-14 h-14 rounded-lg bg-[var(--primary-light)]/20 animate-pulse shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-[var(--primary-light)]/20 animate-pulse rounded w-1/3" />
+                <div className="h-3 bg-[var(--primary-light)]/20 animate-pulse rounded w-1/4" />
+              </div>
+              <div className="flex gap-2">
+                <div className="w-[44px] h-[44px] rounded-full bg-[var(--primary-light)]/20 animate-pulse" />
+                <div className="w-[44px] h-[44px] rounded-full bg-[var(--primary-light)]/20 animate-pulse" />
+                <div className="w-[44px] h-[44px] rounded-full bg-[var(--primary-light)]/20 animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
         <p className="text-[var(--accent)]">No hay productos.</p>
       ) : (
@@ -277,7 +292,7 @@ export default function ProductosPage() {
                   <p className="text-sm text-[var(--accent)] truncate">{product.category_name}</p>
                   <p className="font-bold text-[var(--primary)] text-sm">{formatPrice(product.price)}</p>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => toggleAvailable(product)}
                     className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 ${
