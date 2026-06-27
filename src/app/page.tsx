@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server-public";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ComboCard from "@/components/ComboCard";
@@ -6,8 +6,10 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import { formatPrice } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const [productsRes, combosRes, categoriesRes] = await Promise.all([
     supabase.from("products").select("*").eq("available", true).order("name"),
