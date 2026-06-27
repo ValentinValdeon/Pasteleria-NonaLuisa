@@ -40,8 +40,8 @@ export default function AdminSidebar({ children }: { children: React.ReactNode }
         }`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--primary-light)]/30 shrink-0">
-          <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]">
-            Pastelería
+          <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)] text-lg">
+            Pastelería la Nona Luisa
           </Link>
           <button onClick={() => setOpen(false)} className="p-1 text-[var(--accent)]" aria-label="Cerrar menú">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -95,8 +95,8 @@ export default function AdminSidebar({ children }: { children: React.ReactNode }
 
       <header className="sticky top-0 z-30 bg-white border-b border-[var(--primary-light)]/20">
         <div className="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)] text-lg">
-            Pastelería
+          <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)] text-xl">
+            Pastelería la Nona Luisa
           </Link>
           <button
             onClick={() => setOpen(true)}
