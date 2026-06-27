@@ -30,8 +30,8 @@ export default function AdminSidebar() {
       {open && <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={() => setOpen(false)} />}
 
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-full w-64 bg-white border-r border-[var(--primary-light)]/30 transform transition-transform duration-200 md:translate-x-0 flex flex-col ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed md:sticky top-0 right-0 z-50 h-full w-64 bg-white border-l border-[var(--primary-light)]/30 transform transition-transform duration-200 md:translate-x-0 flex flex-col ${
+          open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between px-4 h-14 md:h-16 border-b border-[var(--primary-light)]/30 shrink-0">
@@ -77,7 +77,7 @@ export default function AdminSidebar() {
 
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-30 p-2.5 bg-white rounded-xl shadow-md border border-[var(--primary-light)]/20"
+        className="md:hidden fixed top-3 right-3 z-30 p-2.5 bg-white rounded-xl shadow-md border border-[var(--primary-light)]/20"
         aria-label="Abrir menú"
       >
         <svg className="w-5 h-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
