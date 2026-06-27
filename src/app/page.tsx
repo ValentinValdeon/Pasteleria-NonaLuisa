@@ -4,25 +4,27 @@ import Hero from "@/components/Hero";
 import ComboCard from "@/components/ComboCard";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
-
+import CartWrapper from "@/components/CartWrapper";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const supabase = createPublicClient();
 
-  const [productsRes, combosRes, categoriesRes] = await Promise.all([
+  const [productsRes, combosRes, categoriesRes, settingsRes] = await Promise.all([
     supabase.from("products").select("*").eq("available", true).order("name"),
     supabase.from("combos").select("*").eq("available", true),
     supabase.from("categories").select("*").order("name"),
+    supabase.from("settings").select("*").eq("key", "delivery_price").single(),
   ]);
 
   const products = productsRes.data ?? [];
   const combos = combosRes.data ?? [];
   const categories = categoriesRes.data ?? [];
+  const deliveryPrice = Number(settingsRes.data?.value ?? 0);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <CartWrapper deliveryPrice={deliveryPrice}>
       <Header />
       <Hero />
 
@@ -36,6 +38,7 @@ export default async function Home() {
               {combos.map((combo) => (
                 <ComboCard
                   key={combo.id}
+                  id={combo.id}
                   name={combo.name}
                   description={combo.description ?? ""}
                   price={Number(combo.price)}
@@ -50,6 +53,6 @@ export default async function Home() {
       <ProductGrid products={products.map((p) => ({ ...p, price: Number(p.price) }))} categories={categories} />
 
       <Footer />
-    </div>
+    </CartWrapper>
   );
 }

@@ -1,6 +1,10 @@
+"use client";
+
 import { formatPrice, getImageUrl } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 
 interface ComboCardProps {
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -15,7 +19,8 @@ function ComboPlaceholder() {
   );
 }
 
-export default function ComboCard({ name, description, price, image_url }: ComboCardProps) {
+export default function ComboCard({ id, name, description, price, image_url }: ComboCardProps) {
+  const { addItem } = useCart();
   const imgSrc = getImageUrl(image_url, 300, 60);
 
   return (
@@ -41,7 +46,10 @@ export default function ComboCard({ name, description, price, image_url }: Combo
         </p>
         <div className="mt-auto pt-3 flex items-center justify-between">
           <span className="font-bold text-lg text-[var(--primary)]">{formatPrice(price)}</span>
-          <button className="bg-[var(--primary)] text-white text-sm px-4 py-2.5 min-h-[44px] rounded-full hover:bg-[var(--accent)] transition-colors font-medium">
+          <button
+            onClick={() => addItem({ id, name, price, image_url, type: "combo" })}
+            className="bg-[var(--primary)] text-white text-sm px-4 py-2.5 min-h-[44px] rounded-full hover:bg-[var(--accent)] transition-colors font-medium"
+          >
             Agregar
           </button>
         </div>

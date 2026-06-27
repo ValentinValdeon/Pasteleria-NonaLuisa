@@ -1,5 +1,8 @@
+"use client";
+
 import type { Product } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +17,7 @@ function PlaceholderIcon() {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
   const imgSrc = getImageUrl(product.image_url, 300, 60);
 
   return (
@@ -41,6 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {formatPrice(product.price)}
           </span>
           <button
+            onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, type: "product" })}
             className="bg-[var(--primary)] text-white text-xs px-3 py-2 min-h-[44px] rounded-full hover:bg-[var(--accent)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
             disabled={!product.available}
           >
