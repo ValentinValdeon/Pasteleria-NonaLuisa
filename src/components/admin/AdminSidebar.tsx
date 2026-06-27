@@ -57,7 +57,7 @@ export default function AdminSidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`block px-3 py-2.5 rounded-lg text-base font-medium transition-colors ${
                   active
                     ? "bg-[var(--primary)]/10 text-[var(--primary)]"
                     : "text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--foreground)]"
@@ -73,7 +73,7 @@ export default function AdminSidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--primary)] hover:bg-[var(--primary-light)]/20 transition-colors"
+                className="block px-3 py-2.5 rounded-lg text-base font-medium text-[var(--primary)] hover:bg-[var(--primary-light)]/20 transition-colors"
                 target={item.external ? "_blank" : undefined}
               >
                 {item.label}
@@ -85,7 +85,7 @@ export default function AdminSidebar() {
         <div className="p-3 border-t border-[var(--primary-light)]/30">
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+            className="w-full px-3 py-2.5 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
           >
             Cerrar sesión
           </button>

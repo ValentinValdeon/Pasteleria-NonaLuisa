@@ -77,7 +77,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
     <div className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="font-semibold text-[var(--foreground)]">{order.customer_name}</p>
+          <p className="font-semibold text-[var(--foreground)] text-base">{order.customer_name}</p>
           <a
             href={`https://wa.me/${order.customer_phone}`}
             target="_blank"
@@ -87,7 +87,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
             <WhatsAppIcon />
             {order.customer_phone}
           </a>
-          <p className="text-xs text-[var(--accent)] mt-0.5">
+          <p className="text-sm text-[var(--accent)] mt-0.5">
             {new Date(order.created_at).toLocaleDateString("es-AR", {
               day: "numeric",
               month: "short",
@@ -99,20 +99,20 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
         </div>
         <div className="flex items-center gap-2">
           {order.delivery && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 uppercase tracking-wide">
               Delivery
             </span>
           )}
-          <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusClass}`}>
+          <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${statusClass}`}>
             {STATUS_LABELS[order.status] ?? order.status}
           </span>
         </div>
       </div>
 
-      <p className="text-lg font-bold text-[var(--primary)]">{formatPrice(order.total)}</p>
+      <p className="text-xl font-bold text-[var(--primary)]">{formatPrice(order.total)}</p>
 
       {order.admin_message && (
-        <p className="text-sm text-[var(--accent)] mt-2 italic bg-[var(--primary-light)]/10 p-2 rounded-lg">
+        <p className="text-base text-[var(--accent)] mt-2 italic bg-[var(--primary-light)]/10 p-2 rounded-lg">
           {order.admin_message}
         </p>
       )}
@@ -122,21 +122,21 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
           <button
             onClick={handleApprove}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
+            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
           >
             Aprobar
           </button>
           <button
             onClick={() => setModal("parcial")}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-xs font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors disabled:opacity-50"
+            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors disabled:opacity-50"
           >
             Parcial
           </button>
           <button
             onClick={() => setModal("rechazado")}
             disabled={updating}
-            className="flex-1 py-2 min-h-[44px] rounded-full text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors disabled:opacity-50"
+            className="flex-1 py-2 min-h-[44px] rounded-full text-sm font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors disabled:opacity-50"
           >
             Rechazar
           </button>

@@ -13,18 +13,9 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
-          Órdenes
-        </h1>
-        <a
-          href="/"
-          className="text-sm text-[var(--primary)] hover:underline"
-          target="_blank"
-        >
-          Ver sitio →
-        </a>
-      </div>
+      <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+        Órdenes
+      </h1>
 
       {!orders || orders.length === 0 ? (
         <div className="text-center py-16 text-[var(--accent)]">

@@ -35,23 +35,23 @@ export default function OrderStatusModal({
           <h3 className="text-lg font-bold text-[var(--foreground)] mb-3">
             {action === "rechazado" ? "Rechazar Pedido" : "Confirmar Parcial"}
           </h3>
-          <label className="block text-sm font-medium text-[var(--accent)] mb-1">{label}</label>
+          <label className="block text-base font-medium text-[var(--accent)] mb-1">{label}</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 rounded-lg border border-[var(--primary-light)] text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] transition-colors resize-none"
+            className="w-full px-3 py-2 rounded-lg border border-[var(--primary-light)] text-base text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] transition-colors resize-none"
           />
           <div className="flex gap-3 mt-4">
             <button
               onClick={onClose}
-              className="flex-1 py-2.5 min-h-[44px] rounded-full border border-[var(--primary-light)] text-sm font-medium text-[var(--accent)] hover:bg-[var(--primary-light)]/20 transition-colors"
+              className="flex-1 py-2.5 min-h-[44px] rounded-full border border-[var(--primary-light)] text-base font-medium text-[var(--accent)] hover:bg-[var(--primary-light)]/20 transition-colors"
             >
               Cancelar
             </button>
             <button
               onClick={() => onConfirm(message)}
-              className="flex-1 py-2.5 min-h-[44px] rounded-full text-sm font-medium text-white transition-colors bg-[var(--primary)] hover:bg-[var(--accent)]"
+              className="flex-1 py-2.5 min-h-[44px] rounded-full text-base font-medium text-white transition-colors bg-[var(--primary)] hover:bg-[var(--accent)]"
             >
               Confirmar
             </button>

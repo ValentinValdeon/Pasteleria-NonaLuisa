@@ -37,25 +37,25 @@ export default async function OrderDetailPage({
 
   return (
     <>
-      <a href="/admin" className="text-sm text-[var(--primary)] hover:underline mb-4 inline-block">
+      <a href="/admin" className="text-base text-[var(--primary)] hover:underline mb-4 inline-block">
         ← Volver al dashboard
       </a>
 
       <div className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-6 shadow-sm mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+            <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
               {order.customer_name}
             </h1>
             <a
               href={`https://wa.me/${order.customer_phone}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-[var(--primary)] hover:underline"
+              className="text-base text-[var(--primary)] hover:underline"
             >
               {order.customer_phone}
             </a>
-            <p className="text-xs text-[var(--accent)] mt-0.5">
+            <p className="text-sm text-[var(--accent)] mt-0.5">
               {new Date(order.created_at).toLocaleDateString("es-AR", {
                 day: "numeric",
                 month: "long",
@@ -67,23 +67,23 @@ export default async function OrderDetailPage({
           </div>
           <div className="flex items-center gap-2">
             {order.delivery && (
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700">
+              <span className="text-sm font-semibold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700">
                 Delivery
               </span>
             )}
-            <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${STATUS_STYLES[order.status]}`}>
+            <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${STATUS_STYLES[order.status]}`}>
               {STATUS_LABELS[order.status] ?? order.status}
             </span>
           </div>
         </div>
 
         <div className="border-t border-[var(--primary-light)]/20 pt-4">
-          <h2 className="text-sm font-semibold text-[var(--accent)] mb-3 uppercase tracking-wide">
+          <h2 className="text-base font-semibold text-[var(--accent)] mb-3 uppercase tracking-wide">
             Items del pedido
           </h2>
           <ul className="divide-y divide-[var(--primary-light)]/10">
             {(items ?? []).map((item) => (
-              <li key={item.id} className="flex justify-between py-2 text-sm">
+              <li key={item.id} className="flex justify-between py-2 text-base">
                 <div>
                   <span className="text-[var(--foreground)]">{item.item_name}</span>
                   <span className="text-[var(--accent)] ml-1">x{item.quantity}</span>
@@ -97,16 +97,16 @@ export default async function OrderDetailPage({
         </div>
 
         <div className="border-t border-[var(--primary-light)]/20 pt-4 mt-4 flex justify-between items-center">
-          <span className="text-sm font-medium text-[var(--accent)]">Total</span>
+          <span className="text-base font-medium text-[var(--accent)]">Total</span>
           <span className="text-xl font-bold text-[var(--primary)]">{formatPrice(order.total)}</span>
         </div>
 
         {order.admin_message && (
           <div className="border-t border-[var(--primary-light)]/20 pt-4 mt-4">
-            <p className="text-xs font-semibold text-[var(--accent)] uppercase tracking-wide mb-1">
+            <p className="text-sm font-semibold text-[var(--accent)] uppercase tracking-wide mb-1">
               Mensaje del admin
             </p>
-            <p className="text-sm text-[var(--accent)] bg-[var(--primary-light)]/10 p-3 rounded-lg">
+            <p className="text-base text-[var(--accent)] bg-[var(--primary-light)]/10 p-3 rounded-lg">
               {order.admin_message}
             </p>
           </div>
@@ -115,7 +115,7 @@ export default async function OrderDetailPage({
 
       {order.status === "pendiente" && (
         <div className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm">
-          <h2 className="text-sm font-semibold text-[var(--accent)] mb-3 uppercase tracking-wide">
+          <h2 className="text-base font-semibold text-[var(--accent)] mb-3 uppercase tracking-wide">
             Acciones
           </h2>
           <OrderCard order={order} alias={alias} />
