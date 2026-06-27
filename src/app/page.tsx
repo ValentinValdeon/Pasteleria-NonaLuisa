@@ -22,12 +22,12 @@ export default async function Home() {
   const categories = categoriesRes.data ?? [];
 
   return (
-    <div className="flex flex-col min-h-screen overflow-x-hidden">
+    <div className="flex flex-col min-h-screen">
       <Header />
       <Hero />
 
       {combos.length > 0 && (
-        <section className="py-12 bg-white overflow-x-hidden">
+        <section className="py-12 bg-white">
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
               Combos Destacados

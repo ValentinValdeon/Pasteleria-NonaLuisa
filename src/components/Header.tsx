@@ -7,6 +7,25 @@ const NAV_LINKS = [
   { href: "#productos", label: "Productos" },
 ];
 
+function HamburgerIcon() {
+  return (
+    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" d="M4 6h16" />
+      <path strokeLinecap="round" d="M4 12h16" />
+      <path strokeLinecap="round" d="M4 18h16" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" d="M6 6l12 12" />
+      <path strokeLinecap="round" d="M18 6l-12 12" />
+    </svg>
+  );
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,12 +55,10 @@ export default function Header() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden p-1 text-[var(--foreground)] transition-transform"
           aria-label="Menú"
         >
-          <span className={`block w-6 h-[2px] bg-[var(--foreground)] transition-transform ${menuOpen ? "rotate-45 translate-y-[3.5px]" : ""}`} />
-          <span className={`block w-6 h-[2px] bg-[var(--foreground)] transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
-          <span className={`block w-6 h-[2px] bg-[var(--foreground)] transition-transform ${menuOpen ? "-rotate-45 -translate-y-[3.5px]" : ""}`} />
+          {menuOpen ? <CloseIcon /> : <HamburgerIcon />}
         </button>
       </div>
 
