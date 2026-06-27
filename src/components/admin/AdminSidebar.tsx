@@ -17,7 +17,7 @@ const EXTRA_LINKS = [
   { href: "/", label: "Ver sitio →", external: true },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -30,7 +30,7 @@ export default function AdminSidebar() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-[var(--background)]">
       {open && <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setOpen(false)} />}
 
       <aside
@@ -92,15 +92,28 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed top-3 right-3 z-30 p-2.5 bg-white rounded-xl shadow-md border border-[var(--primary-light)]/20"
-        aria-label="Abrir menú"
-      >
-        <svg className="w-5 h-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-          <path strokeLinecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
-    </>
+      <header className="sticky top-0 z-30 bg-white border-b border-[var(--primary-light)]/20">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
+          <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)] text-lg">
+            Pastelería
+          </Link>
+          <button
+            onClick={() => setOpen(true)}
+            className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors flex items-center justify-center"
+            aria-label="Abrir menú"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main className="overflow-x-auto">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 md:py-8">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 }

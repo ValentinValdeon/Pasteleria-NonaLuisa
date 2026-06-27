@@ -83,11 +83,9 @@ export default function ProductosPage() {
   const [modal, setModal] = useState<ModalData>(emptyModal);
   const [saving, setSaving] = useState(false);
   const [filterCat, setFilterCat] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
+  const [filterStatus, setFilterStatus] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
-  const statusRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async () => {
     const [{ data: productsData }, { data: cats }] = await Promise.all([
@@ -115,7 +113,6 @@ export default function ProductosPage() {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false);
-      if (statusRef.current && !statusRef.current.contains(e.target as Node)) setStatusOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -182,8 +179,7 @@ export default function ProductosPage() {
 
   const filtered = products.filter((p) => {
     if (filterCat && p.category_id !== filterCat) return false;
-    if (filterStatus === "available" && !p.available) return false;
-    if (filterStatus === "unavailable" && p.available) return false;
+    if (filterStatus && !p.available) return false;
     return true;
   });
 
@@ -234,53 +230,17 @@ export default function ProductosPage() {
               </div>
             )}
           </div>
-          <div className="relative" ref={statusRef}>
-            <button
-              onClick={() => setStatusOpen(!statusOpen)}
-              className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-colors flex items-center justify-center ${
-                filterStatus
-                  ? "bg-[var(--primary)] text-white"
-                  : "bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40"
-              }`}
-              title="Filtrar por estado"
-            >
-              {filterStatus === "available" ? <CheckIcon /> : filterStatus === "unavailable" ? <XIcon /> : <FilterIcon />}
-            </button>
-            {statusOpen && (
-              <div className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
-                <button
-                  onClick={() => { setFilterStatus(""); setStatusOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                    !filterStatus
-                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
-                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => { setFilterStatus("available"); setStatusOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                    filterStatus === "available"
-                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
-                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
-                  }`}
-                >
-                  Habilitados
-                </button>
-                <button
-                  onClick={() => { setFilterStatus("unavailable"); setStatusOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                    filterStatus === "unavailable"
-                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
-                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
-                  }`}
-                >
-                  No disponibles
-                </button>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setFilterStatus(!filterStatus)}
+            className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 flex items-center justify-center ${
+              filterStatus
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+            }`}
+            title={filterStatus ? "Mostrar todos" : "Solo habilitados"}
+          >
+            <CheckIcon />
+          </button>
         </div>
         <button
           onClick={openCreate}
