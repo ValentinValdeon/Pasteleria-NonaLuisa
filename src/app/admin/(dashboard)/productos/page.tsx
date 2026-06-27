@@ -119,7 +119,7 @@ export default function ProductosPage() {
   }, []);
 
   const openCreate = () => {
-    setModal(emptyModal());
+    setModal({ ...emptyModal(), open: true });
   };
 
   const openEdit = (product: Product) => {
@@ -189,21 +189,36 @@ export default function ProductosPage() {
 
   return (
     <>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+          Productos
+        </h1>
+        <button
+          onClick={openCreate}
+          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors flex items-center justify-center"
+          title="Nuevo producto"
+        >
+          <GridPlusIcon />
+        </button>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
-            Productos
-          </h1>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[var(--accent)]">Categorías</span>
           <div className="relative" ref={filterRef}>
             <button
               onClick={() => setFilterOpen(!filterOpen)}
-              className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors flex items-center justify-center"
+              className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-colors flex items-center justify-center ${
+                filterCat
+                  ? "bg-[var(--primary)] text-white"
+                  : "bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40"
+              }`}
               title="Filtrar por categoría"
             >
               <FilterIcon />
             </button>
             {filterOpen && (
-              <div className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
                 <button
                   onClick={() => { setFilterCat(""); setFilterOpen(false); }}
                   className={`w-full text-left px-3 py-2 text-sm transition-colors ${
@@ -230,25 +245,22 @@ export default function ProductosPage() {
               </div>
             )}
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[var(--accent)]">Disponibles</span>
           <button
             onClick={() => setFilterStatus(!filterStatus)}
-            className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 flex items-center justify-center ${
-              filterStatus
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+            className={`relative w-11 h-6 rounded-full transition-colors ${
+              filterStatus ? "bg-green-500" : "bg-gray-300"
             }`}
-            title={filterStatus ? "Mostrar todos" : "Solo habilitados"}
           >
-            <CheckIcon />
+            <span
+              className={`block w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                filterStatus ? "translate-x-[22px]" : "translate-x-[2px]"
+              }`}
+            />
           </button>
         </div>
-        <button
-          onClick={openCreate}
-          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors flex items-center justify-center"
-          title="Nuevo producto"
-        >
-          <GridPlusIcon />
-        </button>
       </div>
 
       {loading ? (
