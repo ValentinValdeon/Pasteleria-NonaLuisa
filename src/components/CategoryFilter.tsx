@@ -13,7 +13,7 @@ export default function CategoryFilter({ categories, activeCategory, onSelect }:
     <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
       <button
         onClick={() => onSelect(null)}
-        className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+        className={`shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
           activeCategory === null
             ? "bg-[var(--primary)] text-white"
             : "bg-white border border-[var(--primary-light)] text-[var(--accent)] hover:border-[var(--primary)]"
@@ -25,7 +25,7 @@ export default function CategoryFilter({ categories, activeCategory, onSelect }:
         <button
           key={cat.id}
           onClick={() => onSelect(cat.id)}
-          className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          className={`shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
             activeCategory === cat.id
               ? "bg-[var(--primary)] text-white"
               : "bg-white border border-[var(--primary-light)] text-[var(--accent)] hover:border-[var(--primary)]"

@@ -32,7 +32,7 @@ export default async function Home() {
             <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
               Combos Destacados
             </h2>
-            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4">
+            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 max-w-full">
               {combos.map((combo) => (
                 <ComboCard
                   key={combo.id}

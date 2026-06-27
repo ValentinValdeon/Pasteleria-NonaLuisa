@@ -55,7 +55,7 @@ export default function Header() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-1 text-[var(--foreground)] transition-transform"
+          className="md:hidden p-2.5 text-[var(--foreground)] transition-transform"
           aria-label="Menú"
         >
           {menuOpen ? <CloseIcon /> : <HamburgerIcon />}

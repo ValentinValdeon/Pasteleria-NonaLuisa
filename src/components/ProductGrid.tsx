@@ -27,7 +27,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         activeCategory={activeCategory}
         onSelect={setActiveCategory}
       />
-      <div className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+      <div className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 max-w-full">
         {filtered.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

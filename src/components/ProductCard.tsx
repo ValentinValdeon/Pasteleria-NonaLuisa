@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {formatPrice(product.price)}
           </span>
           <button
-            className="bg-[var(--primary)] text-white text-xs px-3 py-1.5 rounded-full hover:bg-[var(--accent)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
+            className="bg-[var(--primary)] text-white text-xs px-3 py-2 min-h-[44px] rounded-full hover:bg-[var(--accent)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
             disabled={!product.available}
           >
             {product.available ? "Agregar" : "Agotado"}
