@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Order } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/context/ToastContext";
 import OrderStatusModal from "./OrderStatusModal";
 
 interface OrderCardProps {
@@ -60,6 +61,7 @@ function XIcon() {
 
 export default function OrderCard({ order, alias }: OrderCardProps) {
   const router = useRouter();
+  const { addToast } = useToast();
   const [modal, setModal] = useState<"rechazado" | "parcial" | null>(null);
   const [updating, setUpdating] = useState(false);
   const supabase = createClient();
@@ -75,6 +77,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
 
   const handleApprove = async () => {
     await updateStatus("aprobado");
+    addToast("Pedido aprobado");
     const text = encodeURIComponent(
       `✅ Pedido aprobado por ${formatPrice(order.total)}. Pagá al alias: ${alias}.${order.delivery ? " Si elegiste delivery, decime tu dirección." : ""}`
     );
@@ -83,6 +86,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
 
   const handleReject = async (message: string) => {
     await updateStatus("rechazado", message);
+    addToast("Pedido rechazado");
     const text = encodeURIComponent(`❌ Pedido rechazado: ${message}`);
     window.open(`https://wa.me/${order.customer_phone}?text=${text}`, "_blank");
     setModal(null);
@@ -90,6 +94,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
 
   const handlePartial = async (message: string) => {
     await updateStatus("parcial", message);
+    addToast("Pedido marcado como parcial");
     const text = encodeURIComponent(`⚠️ ${message}`);
     window.open(`https://wa.me/${order.customer_phone}?text=${text}`, "_blank");
     setModal(null);

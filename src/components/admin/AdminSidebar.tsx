@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { ToastProvider } from "@/context/ToastContext";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Órdenes" },
@@ -111,7 +112,9 @@ export default function AdminSidebar({ children }: { children: React.ReactNode }
 
       <main className="overflow-x-auto">
         <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 md:py-8">
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </div>
       </main>
     </div>

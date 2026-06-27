@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
+import { useToast } from "@/context/ToastContext";
 
 interface ModalData {
   open: boolean;
@@ -46,6 +47,7 @@ function TrashIcon() {
 
 export default function CategoriasPage() {
   const supabase = createClient();
+  const { addToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalData>(emptyModal);
@@ -86,8 +88,10 @@ export default function CategoriasPage() {
 
     if (modal.editing) {
       await supabase.from("categories").update(payload).eq("id", modal.editing.id);
+      addToast("Categoría actualizada");
     } else {
       await supabase.from("categories").insert(payload);
+      addToast("Categoría creada");
     }
 
     setSaving(false);
@@ -98,6 +102,7 @@ export default function CategoriasPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Eliminar esta categoría? Los productos asociados quedarán sin categoría.")) return;
     await supabase.from("categories").delete().eq("id", id);
+    addToast("Categoría eliminada");
     fetchCategories();
   };
 

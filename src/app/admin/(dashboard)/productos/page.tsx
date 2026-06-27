@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Product, Category } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
+import { useToast } from "@/context/ToastContext";
 
 interface ModalData {
   open: boolean;
@@ -82,6 +83,7 @@ export default function ProductosPage() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalData>(emptyModal);
   const [saving, setSaving] = useState(false);
+  const { addToast } = useToast();
   const [filterCat, setFilterCat] = useState("");
   const [filterStatus, setFilterStatus] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -153,8 +155,10 @@ export default function ProductosPage() {
 
     if (modal.editing) {
       await supabase.from("products").update(payload).eq("id", modal.editing.id);
+      addToast("Producto actualizado");
     } else {
       await supabase.from("products").insert(payload);
+      addToast("Producto creado");
     }
 
     setSaving(false);
@@ -165,16 +169,19 @@ export default function ProductosPage() {
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`¿Eliminar "${name}"? También se eliminará de los combos que lo contengan.`)) return;
     await supabase.from("products").delete().eq("id", id);
+    addToast("Producto eliminado");
     fetchData();
   };
 
   const toggleAvailable = (product: Product) => {
+    const next = !product.available;
     setProducts((prev) =>
       prev.map((p) =>
-        p.id === product.id ? { ...p, available: !p.available } : p
+        p.id === product.id ? { ...p, available: next } : p
       )
     );
-    supabase.from("products").update({ available: !product.available }).eq("id", product.id);
+    addToast(next ? "Producto habilitado" : "Producto deshabilitado");
+    supabase.from("products").update({ available: next }).eq("id", product.id);
   };
 
   const filtered = products.filter((p) => {
