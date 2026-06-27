@@ -22,17 +22,17 @@ export default async function Home() {
   const categories = categoriesRes.data ?? [];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden">
       <Header />
       <Hero />
 
       {combos.length > 0 && (
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-white overflow-x-hidden">
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
               Combos Destacados
             </h2>
-            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4">
+            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4">
               {combos.map((combo) => (
                 <ComboCard
                   key={combo.id}
