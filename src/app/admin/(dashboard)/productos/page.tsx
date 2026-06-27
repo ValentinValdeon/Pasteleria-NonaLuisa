@@ -83,7 +83,7 @@ export default function ProductosPage() {
   const [modal, setModal] = useState<ModalData>(emptyModal);
   const [saving, setSaving] = useState(false);
   const [filterCat, setFilterCat] = useState("");
-  const [filterStatus, setFilterStatus] = useState(false);
+  const [filterStatus, setFilterStatus] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -179,7 +179,7 @@ export default function ProductosPage() {
 
   const filtered = products.filter((p) => {
     if (filterCat && p.category_id !== filterCat) return false;
-    if (filterStatus && !p.available) return false;
+    if (filterStatus ? !p.available : p.available) return false;
     return true;
   });
 
@@ -247,7 +247,7 @@ export default function ProductosPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[var(--accent)]">Disponibles</span>
+          <span className="text-sm font-medium text-[var(--accent)]">{filterStatus ? "Disponibles" : "No disponibles"}</span>
           <button
             onClick={() => setFilterStatus(!filterStatus)}
             className={`relative w-11 h-6 rounded-full transition-colors ${
@@ -281,7 +281,11 @@ export default function ProductosPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-[var(--accent)]">No hay productos.</p>
+        <p className="text-[var(--accent)]">
+          {filterStatus
+            ? "No hay productos disponibles."
+            : "No hay productos no disponibles."}
+        </p>
       ) : (
         <div className="space-y-3">
           {filtered.map((product) => {
