@@ -83,8 +83,11 @@ export default function ProductosPage() {
   const [modal, setModal] = useState<ModalData>(emptyModal);
   const [saving, setSaving] = useState(false);
   const [filterCat, setFilterCat] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async () => {
     const [{ data: productsData }, { data: cats }] = await Promise.all([
@@ -111,9 +114,8 @@ export default function ProductosPage() {
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
-        setFilterOpen(false);
-      }
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false);
+      if (statusRef.current && !statusRef.current.contains(e.target as Node)) setStatusOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -178,9 +180,12 @@ export default function ProductosPage() {
     supabase.from("products").update({ available: !product.available }).eq("id", product.id);
   };
 
-  const filtered = filterCat
-    ? products.filter((p) => p.category_id === filterCat)
-    : products;
+  const filtered = products.filter((p) => {
+    if (filterCat && p.category_id !== filterCat) return false;
+    if (filterStatus === "available" && !p.available) return false;
+    if (filterStatus === "unavailable" && p.available) return false;
+    return true;
+  });
 
   const activeFilterName = filterCat
     ? categories.find((c) => c.id === filterCat)?.name ?? "Todas"
@@ -196,7 +201,7 @@ export default function ProductosPage() {
           <div className="relative" ref={filterRef}>
             <button
               onClick={() => setFilterOpen(!filterOpen)}
-              className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors"
+              className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors flex items-center justify-center"
               title="Filtrar por categoría"
             >
               <FilterIcon />
@@ -229,10 +234,57 @@ export default function ProductosPage() {
               </div>
             )}
           </div>
+          <div className="relative" ref={statusRef}>
+            <button
+              onClick={() => setStatusOpen(!statusOpen)}
+              className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-colors flex items-center justify-center ${
+                filterStatus
+                  ? "bg-[var(--primary)] text-white"
+                  : "bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40"
+              }`}
+              title="Filtrar por estado"
+            >
+              {filterStatus === "available" ? <CheckIcon /> : filterStatus === "unavailable" ? <XIcon /> : <FilterIcon />}
+            </button>
+            {statusOpen && (
+              <div className="absolute top-full right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-[var(--primary-light)]/20 z-30 py-1 max-h-60 overflow-y-auto">
+                <button
+                  onClick={() => { setFilterStatus(""); setStatusOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    !filterStatus
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
+                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => { setFilterStatus("available"); setStatusOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    filterStatus === "available"
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
+                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
+                  }`}
+                >
+                  Habilitados
+                </button>
+                <button
+                  onClick={() => { setFilterStatus("unavailable"); setStatusOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    filterStatus === "unavailable"
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)] font-semibold"
+                      : "text-[var(--accent)] hover:bg-[var(--primary-light)]/10"
+                  }`}
+                >
+                  No disponibles
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <button
           onClick={openCreate}
-          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors"
+          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors flex items-center justify-center"
           title="Nuevo producto"
         >
           <GridPlusIcon />
@@ -283,11 +335,6 @@ export default function ProductosPage() {
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!product.available ? "line-through opacity-50" : ""}`}>
                       {product.name}
                     </p>
-                    {!product.available && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
-                        No disp.
-                      </span>
-                    )}
                   </div>
                   <p className="text-sm text-[var(--accent)] truncate">{product.category_name}</p>
                   <p className="font-bold text-[var(--primary)] text-sm">{formatPrice(product.price)}</p>
@@ -295,27 +342,25 @@ export default function ProductosPage() {
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => toggleAvailable(product)}
-                    className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 ${
+                    className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 flex items-center justify-center ${
                       product.available
                         ? "bg-green-100 text-green-700 hover:bg-green-200"
                         : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                     }`}
                     title={product.available ? "Deshabilitar" : "Habilitar"}
                   >
-                    <span className="block transition-transform duration-200">
-                      {product.available ? <CheckIcon /> : <XIcon />}
-                    </span>
+                    {product.available ? <CheckIcon /> : <XIcon />}
                   </button>
                   <button
                     onClick={() => openEdit(product)}
-                    className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors"
+                    className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors flex items-center justify-center"
                     title="Editar"
                   >
                     <EditIcon />
                   </button>
                   <button
                     onClick={() => handleDelete(product.id, product.name)}
-                    className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                    className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors flex items-center justify-center"
                     title="Eliminar"
                   >
                     <TrashIcon />
