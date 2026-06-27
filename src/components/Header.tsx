@@ -5,6 +5,7 @@ import { useState } from "react";
 const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "#productos", label: "Productos" },
+  { href: "/admin", label: "Admin" },
 ];
 
 function HamburgerIcon() {
