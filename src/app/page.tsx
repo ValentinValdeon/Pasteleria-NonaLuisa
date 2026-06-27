@@ -11,17 +11,25 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const supabase = createPublicClient();
 
-  const [productsRes, combosRes, categoriesRes, settingsRes] = await Promise.all([
-    supabase.from("products").select("*").eq("available", true).order("name"),
+  const [productsRes, combosRes, comboItemsRes, categoriesRes, settingsRes] = await Promise.all([
+    supabase.from("products").select("*").order("name"),
     supabase.from("combos").select("*").eq("available", true),
+    supabase.from("combo_items").select("*"),
     supabase.from("categories").select("*").order("name"),
     supabase.from("settings").select("*").eq("key", "delivery_price").single(),
   ]);
 
-  const products = productsRes.data ?? [];
-  const combos = combosRes.data ?? [];
+  const products = productsRes.data?.filter((p) => p.available) ?? [];
+  const allProducts = productsRes.data ?? [];
+  const comboItems = comboItemsRes.data ?? [];
+  const combosRaw = combosRes.data ?? [];
   const categories = categoriesRes.data ?? [];
   const deliveryPrice = Number(settingsRes.data?.value ?? 0);
+
+  const combos = combosRaw.filter((combo) => {
+    const items = comboItems.filter((ci) => ci.combo_id === combo.id);
+    return items.every((ci) => allProducts.find((p) => p.id === ci.product_id)?.available !== false);
+  });
 
   return (
     <CartWrapper deliveryPrice={deliveryPrice}>

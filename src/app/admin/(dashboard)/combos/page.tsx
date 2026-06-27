@@ -91,6 +91,7 @@ function PlusIcon() {
 
 interface ComboWithItems extends Combo {
   items: (ComboItem & { product_name?: string })[];
+  has_unavailable: boolean;
 }
 
 export default function CombosPage() {
@@ -121,7 +122,10 @@ export default function CombosPage() {
             ...ci,
             product_name: productsData?.find((p) => p.id === ci.product_id)?.name ?? "Producto eliminado",
           }));
-        return { ...c, items };
+        const has_unavailable = items.some(
+          (i) => !productsData?.find((p) => p.id === i.product_id)?.available
+        );
+        return { ...c, items, has_unavailable };
       });
       setCombos(enriched);
     }
@@ -331,6 +335,11 @@ export default function CombosPage() {
                     <span className="text-xs text-[var(--accent)] bg-[var(--primary-light)]/20 px-2 py-0.5 rounded-full shrink-0">
                       {combo.items.length} {combo.items.length === 1 ? "producto" : "productos"}
                     </span>
+                    {combo.has_unavailable && (
+                      <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full shrink-0 font-medium">
+                        Prod. no disponible
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm text-[var(--accent)] truncate">
                     {combo.items.map((i) => i.product_name).join(", ")}
