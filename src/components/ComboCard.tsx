@@ -19,7 +19,7 @@ export default function ComboCard({ name, description, price, image_url }: Combo
   const imgSrc = getImageUrl(image_url, 300, 60);
 
   return (
-    <article className="w-[55vw] sm:w-64 max-w-[280px] shrink-0 snap-start bg-white rounded-xl shadow-md overflow-hidden border-2 border-[var(--primary)]/20 flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
+    <article className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-[var(--primary)]/20 flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
       <div className="h-36 bg-gradient-to-br from-[var(--primary-light)]/40 to-[var(--primary)]/20 overflow-hidden relative">
         {imgSrc ? (
           <img src={imgSrc} alt={name} className="w-full h-full object-cover" loading="lazy" />
