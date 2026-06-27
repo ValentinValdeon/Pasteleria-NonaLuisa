@@ -100,8 +100,10 @@ export default function CombosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalData>(emptyModal);
+  const [preview, setPreview] = useState<ComboWithItems | null>(null);
   const [saving, setSaving] = useState(false);
   const { addToast } = useToast();
+  const [filterStatus, setFilterStatus] = useState(true);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -249,6 +251,11 @@ export default function CombosPage() {
     supabase.from("combos").update({ available: next }).eq("id", combo.id);
   };
 
+  const filtered = combos.filter((c) => {
+    if (filterStatus ? !c.available : c.available) return false;
+    return true;
+  });
+
   const availableProducts = products.filter((p) => p.available);
 
   const addItemEntry = () => {
@@ -288,6 +295,24 @@ export default function CombosPage() {
         </button>
       </div>
 
+      <div className="flex items-center justify-end mb-6">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[var(--accent)]">{filterStatus ? "Disponibles" : "No disponibles"}</span>
+          <button
+            onClick={() => setFilterStatus(!filterStatus)}
+            className={`relative w-11 h-6 rounded-full transition-colors ${
+              filterStatus ? "bg-green-500" : "bg-gray-300"
+            }`}
+          >
+            <span
+              className={`block w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                filterStatus ? "translate-x-[22px]" : "translate-x-[2px]"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -309,12 +334,13 @@ export default function CombosPage() {
         <p className="text-[var(--accent)]">No hay combos todavía.</p>
       ) : (
         <div className="space-y-3">
-          {combos.map((combo) => {
+          {filtered.map((combo) => {
             const imgSrc = getImageUrl(combo.image_url, 80, 60);
             return (
               <div
                 key={combo.id}
-                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4"
+                onClick={() => setPreview(combo)}
+                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
               >
                 <div className="w-14 h-14 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0">
                   {imgSrc ? (
@@ -332,9 +358,6 @@ export default function CombosPage() {
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!combo.available ? "line-through opacity-50" : ""}`}>
                       {combo.name}
                     </p>
-                    <span className="text-xs text-[var(--accent)] bg-[var(--primary-light)]/20 px-2 py-0.5 rounded-full shrink-0">
-                      {combo.items.length} {combo.items.length === 1 ? "producto" : "productos"}
-                    </span>
                     {combo.has_unavailable && (
                       <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full shrink-0 font-medium">
                         Prod. no disponible
@@ -344,9 +367,14 @@ export default function CombosPage() {
                   <p className="text-sm text-[var(--accent)] truncate">
                     {combo.items.map((i) => i.product_name).join(", ")}
                   </p>
-                  <p className="font-bold text-[var(--primary)] text-sm">{formatPrice(combo.price)}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="font-bold text-[var(--primary)] text-sm">{formatPrice(combo.price)}</span>
+                    <span className="text-xs text-[var(--accent)] bg-[var(--primary-light)]/20 px-2 py-0.5 rounded-full">
+                      {combo.items.length} {combo.items.length === 1 ? "producto" : "productos"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => toggleAvailable(combo)}
                     className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 flex items-center justify-center ${
@@ -534,6 +562,71 @@ export default function CombosPage() {
                 >
                   {saving ? "Guardando..." : "Guardar"}
                 </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {preview && (
+        <>
+          <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setPreview(null)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+              {getImageUrl(preview.image_url) ? (
+                <div className="h-48 bg-[var(--primary-light)]/20">
+                  <img src={getImageUrl(preview.image_url)!} alt={preview.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-48 bg-[var(--primary-light)]/20 flex items-center justify-center">
+                  <UploadIcon />
+                </div>
+              )}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+                    {preview.name}
+                  </h3>
+                  <button
+                    onClick={() => setPreview(null)}
+                    className="p-1.5 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    <XIcon />
+                  </button>
+                </div>
+                {preview.description && (
+                  <p className="text-sm text-[var(--accent)] leading-relaxed mb-3">{preview.description}</p>
+                )}
+                <div className="flex items-center gap-2 text-sm mb-1">
+                  <span className="text-[var(--accent)]">Precio:</span>
+                  <span className="font-bold text-[var(--primary)]">{formatPrice(preview.price)}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm mb-1">
+                  <span className="text-[var(--accent)]">Estado:</span>
+                  <span className={`font-medium ${preview.available ? "text-green-600" : "text-red-500"}`}>
+                    {preview.available ? "Disponible" : "No disponible"}
+                  </span>
+                </div>
+                {preview.has_unavailable && (
+                  <div className="flex items-center gap-2 text-sm mb-1">
+                    <span className="text-red-600 font-medium">Contiene productos no disponibles</span>
+                  </div>
+                )}
+                {preview.items.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-[var(--primary-light)]/20">
+                    <p className="text-sm font-medium text-[var(--accent)] mb-2">Productos incluidos:</p>
+                    <ul className="space-y-1">
+                      {preview.items.map((item) => (
+                        <li key={item.id} className="text-sm text-[var(--foreground)] flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-full bg-[var(--primary-light)]/20 flex items-center justify-center text-xs font-medium text-[var(--accent)] shrink-0">
+                            {item.quantity}
+                          </span>
+                          {item.product_name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>

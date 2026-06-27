@@ -90,6 +90,7 @@ export default function ProductosPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalData>(emptyModal);
+  const [preview, setPreview] = useState<(Product & { category_name?: string }) | null>(null);
   const [saving, setSaving] = useState(false);
   const { addToast } = useToast();
   const [filterCat, setFilterCat] = useState("");
@@ -327,7 +328,8 @@ export default function ProductosPage() {
             return (
               <div
                 key={product.id}
-                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4"
+                onClick={() => setPreview(product)}
+                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
               >
                 <div className="w-14 h-14 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0">
                   {imgSrc ? (
@@ -349,7 +351,7 @@ export default function ProductosPage() {
                   <p className="text-sm text-[var(--accent)] truncate">{product.category_name}</p>
                   <p className="font-bold text-[var(--primary)] text-sm">{formatPrice(product.price)}</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => toggleAvailable(product)}
                     className={`p-2 min-h-[44px] min-w-[44px] rounded-full transition-all duration-200 flex items-center justify-center ${
@@ -503,6 +505,57 @@ export default function ProductosPage() {
                 >
                   {saving ? "Guardando..." : "Guardar"}
                 </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {preview && (
+        <>
+          <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setPreview(null)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+              {getImageUrl(preview.image_url) ? (
+                <div className="h-48 bg-[var(--primary-light)]/20">
+                  <img src={getImageUrl(preview.image_url)!} alt={preview.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-48 bg-[var(--primary-light)]/20 flex items-center justify-center">
+                  <svg className="w-12 h-12 text-[var(--primary-light)]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                </div>
+              )}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+                    {preview.name}
+                  </h3>
+                  <button
+                    onClick={() => setPreview(null)}
+                    className="p-1.5 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    <XIcon />
+                  </button>
+                </div>
+                {preview.description && (
+                  <p className="text-sm text-[var(--accent)] leading-relaxed mb-3">{preview.description}</p>
+                )}
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--accent)]">Categoría:</span>
+                  <span className="font-medium text-[var(--foreground)]">{preview.category_name}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm mt-1">
+                  <span className="text-[var(--accent)]">Precio:</span>
+                  <span className="font-bold text-[var(--primary)]">{formatPrice(preview.price)}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm mt-1">
+                  <span className="text-[var(--accent)]">Estado:</span>
+                  <span className={`font-medium ${preview.available ? "text-green-600" : "text-red-500"}`}>
+                    {preview.available ? "Disponible" : "No disponible"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

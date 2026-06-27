@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
 import { useToast } from "@/context/ToastContext";
+import { getImageUrl } from "@/lib/utils";
 
 interface ModalData {
   open: boolean;
@@ -53,12 +54,21 @@ function UploadIcon() {
   );
 }
 
+function XIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
 export default function CategoriasPage() {
   const supabase = createClient();
   const { addToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalData>(emptyModal);
+  const [preview, setPreview] = useState<Category | null>(null);
   const [saving, setSaving] = useState(false);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -170,25 +180,33 @@ export default function CategoriasPage() {
           {categories.map((cat) => (
             <div
               key={cat.id}
-              className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center justify-between gap-4"
+              onClick={() => setPreview(cat)}
+              className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center justify-between gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
             >
-              <div className="min-w-0">
-                <p className="font-semibold text-[var(--foreground)] text-base">{cat.name}</p>
-                {cat.description && (
-                  <p className="text-sm text-[var(--accent)] truncate">{cat.description}</p>
-                )}
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                {getImageUrl(cat.image_url, 80, 60) ? (
+                  <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-[var(--primary-light)]/20">
+                    <img src={getImageUrl(cat.image_url, 80, 60)!} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                ) : null}
+                <div className="min-w-0">
+                  <p className="font-semibold text-[var(--foreground)] text-base">{cat.name}</p>
+                  {cat.description && (
+                    <p className="text-sm text-[var(--accent)] truncate">{cat.description}</p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                 <button
-                  onClick={() => openEdit(cat)}
-                  className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openEdit(cat); }}
+                  className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors flex items-center justify-center"
                   title="Editar"
                 >
                   <EditIcon />
                 </button>
                 <button
-                  onClick={() => handleDelete(cat.id)}
-                  className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); handleDelete(cat.id); }}
+                  className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors flex items-center justify-center"
                   title="Eliminar"
                 >
                   <TrashIcon />
@@ -279,6 +297,41 @@ export default function CategoriasPage() {
                 >
                   {saving ? "Guardando..." : "Guardar"}
                 </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {preview && (
+        <>
+          <div className="fixed inset-0 z-50 bg-black/40" onClick={() => setPreview(null)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+              {getImageUrl(preview.image_url) ? (
+                <div className="h-48 bg-[var(--primary-light)]/20">
+                  <img src={getImageUrl(preview.image_url)!} alt={preview.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-48 bg-[var(--primary-light)]/20 flex items-center justify-center">
+                  <UploadIcon />
+                </div>
+              )}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+                    {preview.name}
+                  </h3>
+                  <button
+                    onClick={() => setPreview(null)}
+                    className="p-1.5 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    <XIcon />
+                  </button>
+                </div>
+                {preview.description && (
+                  <p className="text-sm text-[var(--accent)] leading-relaxed">{preview.description}</p>
+                )}
               </div>
             </div>
           </div>
