@@ -37,7 +37,7 @@ export default function Header() {
           href="/"
           className="text-lg md:text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]"
         >
-          Pastelería
+          Pastelería la Nona Luisa
         </a>
 
         {/* Desktop nav */}
