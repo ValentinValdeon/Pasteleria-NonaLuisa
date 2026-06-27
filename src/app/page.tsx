@@ -4,7 +4,7 @@ import Hero from "@/components/Hero";
 import ComboCard from "@/components/ComboCard";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
-import { formatPrice } from "@/lib/utils";
+
 
 export const dynamic = "force-dynamic";
 

@@ -18,8 +18,8 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
     : products;
 
   return (
-    <section id="productos" className="max-w-6xl mx-auto px-4 py-12">
-      <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+    <section id="productos" className="max-w-6xl mx-auto px-4 py-10 md:py-16 animate-slide-up">
+      <h2 className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-5 md:mb-6">
         Nuestros Productos
       </h2>
       <CategoryFilter
@@ -27,7 +27,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         activeCategory={activeCategory}
         onSelect={setActiveCategory}
       />
-      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="mt-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
         {filtered.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
