@@ -13,6 +13,10 @@ const NAV_ITEMS = [
   { href: "/admin/configuracion", label: "Configuración" },
 ];
 
+const EXTRA_LINKS = [
+  { href: "/", label: "Ver sitio →", external: true },
+];
+
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -27,18 +31,18 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {open && <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setOpen(false)} />}
 
       <aside
-        className={`fixed md:sticky top-0 right-0 z-50 h-full w-64 bg-white border-l border-[var(--primary-light)]/30 transform transition-transform duration-200 md:translate-x-0 flex flex-col ${
+        className={`fixed top-0 right-0 z-50 h-full w-64 bg-white border-l border-[var(--primary-light)]/30 transform transition-transform duration-200 flex flex-col ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-4 h-14 md:h-16 border-b border-[var(--primary-light)]/30 shrink-0">
+        <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--primary-light)]/30 shrink-0">
           <Link href="/admin" className="font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]">
             Pastelería
           </Link>
-          <button onClick={() => setOpen(false)} className="md:hidden p-1 text-[var(--accent)]" aria-label="Cerrar menú">
+          <button onClick={() => setOpen(false)} className="p-1 text-[var(--accent)]" aria-label="Cerrar menú">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
@@ -63,6 +67,19 @@ export default function AdminSidebar() {
               </Link>
             );
           })}
+          <div className="pt-2 mt-2 border-t border-[var(--primary-light)]/20">
+            {EXTRA_LINKS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="block px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--primary)] hover:bg-[var(--primary-light)]/20 transition-colors"
+                target={item.external ? "_blank" : undefined}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         <div className="p-3 border-t border-[var(--primary-light)]/30">
@@ -77,7 +94,7 @@ export default function AdminSidebar() {
 
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden fixed top-3 right-3 z-30 p-2.5 bg-white rounded-xl shadow-md border border-[var(--primary-light)]/20"
+        className="fixed top-3 right-3 z-30 p-2.5 bg-white rounded-xl shadow-md border border-[var(--primary-light)]/20"
         aria-label="Abrir menú"
       >
         <svg className="w-5 h-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
