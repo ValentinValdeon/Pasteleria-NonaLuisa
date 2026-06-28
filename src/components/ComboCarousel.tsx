@@ -35,7 +35,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             Combos Destacados
           </h2>
           <div className="flex justify-center">
-            <div className="w-[65vw] sm:w-[260px]">
+            <div className="w-[65vw] sm:w-[260px] h-[360px]">
               <ComboCard
                 id={combos[0].id}
                 name={combos[0].name}
@@ -73,7 +73,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     const track = trackRef.current;
     if (!track) return;
     track.style.transition = smooth
-      ? "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+      ? "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
       : "none";
     track.style.transform = `translateX(${x}px)`;
     translateXRef.current = x;
@@ -95,7 +95,8 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       const p = Math.min(absDist / maxDist, 1);
       const dir = dist > 0 ? 1 : dist < 0 ? -1 : 0;
 
-      card.style.transform = `perspective(800px) rotateY(${dir * p * 15}deg) translateZ(${-p * 60}px) scale(${1 - p * 0.08})`;
+      const scale = 1.08 - p * 0.16;
+      card.style.transform = `perspective(800px) rotateY(${dir * p * 15}deg) translateZ(${-p * 60}px) scale(${scale})`;
       card.style.zIndex = Math.round((1 - p) * 10).toString();
     }
   }, []);
@@ -181,7 +182,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
 
     const onMove = (e: PointerEvent) => {
       if (!isDown || !e.isPrimary) return;
-      moveTrack(startTranslate + (e.clientX - startX), false);
+      moveTrack(startTranslate + (e.clientX - startX) * 1.5, false);
       applyTransforms();
     };
 
@@ -223,7 +224,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               {extended.map((combo) => (
                 <div
                   key={combo._key}
-                  className="flex-shrink-0 w-[65vw] sm:w-[260px]"
+                  className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[360px]"
                 >
                   <ComboCard
                     id={combo.id}
