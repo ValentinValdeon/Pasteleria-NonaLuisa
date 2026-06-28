@@ -342,17 +342,6 @@ export default function CombosPage() {
                 onClick={() => setPreview(combo)}
                 className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
               >
-                <div className="w-14 h-14 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0">
-                  {imgSrc ? (
-                    <img src={imgSrc} alt={combo.name} className="w-full h-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[var(--primary-light)]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H10M10 6H6.75A2.25 2.25 0 0 0 4.5 8.25v10.5A2.25 2.25 0 0 0 6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75V10m0 0V6a2.25 2.25 0 0 0-2.25-2.25H15M19.5 10l-5.25-5.25M15 21v-3.375c0-.621-.504-1.125-1.125-1.125h-1.5c-.621 0-1.125.504-1.125 1.125V21" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!combo.available ? "line-through opacity-50" : ""}`}>

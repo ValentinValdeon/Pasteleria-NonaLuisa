@@ -331,17 +331,6 @@ export default function ProductosPage() {
                 onClick={() => setPreview(product)}
                 className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
               >
-                <div className="w-14 h-14 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0">
-                  {imgSrc ? (
-                    <img src={imgSrc} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[var(--primary-light)]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!product.available ? "line-through opacity-50" : ""}`}>
