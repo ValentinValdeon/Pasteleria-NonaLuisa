@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Combo, ComboItem, Product } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
 import { useToast } from "@/context/ToastContext";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface ComboItemEntry {
   product_id: string;
@@ -104,8 +105,6 @@ export default function CombosPage() {
   const [saving, setSaving] = useState(false);
   const { addToast } = useToast();
   const [filterStatus, setFilterStatus] = useState(true);
-  const uploadRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
 
   const fetchData = async () => {
     const [{ data: combosData }, { data: comboItemsData }, { data: productsData }] = await Promise.all([
@@ -221,23 +220,6 @@ export default function CombosPage() {
     await supabase.from("combos").delete().eq("id", id);
     addToast("Combo eliminado");
     fetchData();
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const filePath = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("product-images").upload(filePath, file);
-    if (error) {
-      addToast("Error al subir imagen", "error");
-      setUploading(false);
-      return;
-    }
-    const { data: { publicUrl } } = supabase.storage.from("product-images").getPublicUrl(filePath);
-    setModal({ ...modal, image_url: publicUrl });
-    setUploading(false);
   };
 
   const toggleAvailable = async (combo: ComboWithItems) => {
@@ -451,29 +433,11 @@ export default function CombosPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--accent)] mb-1">Imagen</label>
-                  <input
-                    type="file"
-                    ref={uploadRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="hidden"
+                  <ImageUploader
+                    onUpload={(url) => setModal({ ...modal, image_url: url })}
+                    onRemove={() => setModal({ ...modal, image_url: "" })}
+                    currentUrl={modal.image_url}
                   />
-                  <button
-                    onClick={() => uploadRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full px-4 py-3 min-h-[44px] rounded-xl text-sm font-medium bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--primary-light)]/40"
-                  >
-                    <UploadIcon />
-                    {uploading ? "Subiendo..." : modal.image_url ? "Cambiar imagen" : "Seleccionar imagen"}
-                  </button>
-                  {modal.image_url && (
-                    <button
-                      onClick={() => setModal({ ...modal, image_url: "" })}
-                      className="mt-1.5 text-xs text-red-500 hover:underline"
-                    >
-                      Quitar imagen
-                    </button>
-                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <label className="text-sm font-medium text-[var(--accent)]">Disponible</label>

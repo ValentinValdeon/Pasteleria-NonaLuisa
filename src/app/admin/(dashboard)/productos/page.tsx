@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Product, Category } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
 import { useToast } from "@/context/ToastContext";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface ModalData {
   open: boolean;
@@ -76,14 +77,6 @@ function FilterIcon() {
   );
 }
 
-function UploadIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
-    </svg>
-  );
-}
-
 export default function ProductosPage() {
   const supabase = createClient();
   const [products, setProducts] = useState<(Product & { category_name?: string })[]>([]);
@@ -97,8 +90,6 @@ export default function ProductosPage() {
   const [filterStatus, setFilterStatus] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
-  const uploadRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
 
   const fetchData = async () => {
     const [{ data: productsData }, { data: cats }] = await Promise.all([
@@ -182,23 +173,6 @@ export default function ProductosPage() {
     await supabase.from("products").delete().eq("id", id);
     addToast("Producto eliminado");
     fetchData();
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const filePath = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("product-images").upload(filePath, file);
-    if (error) {
-      addToast("Error al subir imagen", "error");
-      setUploading(false);
-      return;
-    }
-    const { data: { publicUrl } } = supabase.storage.from("product-images").getPublicUrl(filePath);
-    setModal({ ...modal, image_url: publicUrl });
-    setUploading(false);
   };
 
   const toggleAvailable = async (product: Product) => {
@@ -446,29 +420,11 @@ export default function ProductosPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--accent)] mb-1">Imagen</label>
-                  <input
-                    type="file"
-                    ref={uploadRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="hidden"
+                  <ImageUploader
+                    onUpload={(url) => setModal({ ...modal, image_url: url })}
+                    onRemove={() => setModal({ ...modal, image_url: "" })}
+                    currentUrl={modal.image_url}
                   />
-                  <button
-                    onClick={() => uploadRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full px-4 py-3 min-h-[44px] rounded-xl text-sm font-medium bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--primary-light)]/40"
-                  >
-                    <UploadIcon />
-                    {uploading ? "Subiendo..." : modal.image_url ? "Cambiar imagen" : "Seleccionar imagen"}
-                  </button>
-                  {modal.image_url && (
-                    <button
-                      onClick={() => setModal({ ...modal, image_url: "" })}
-                      className="mt-1.5 text-xs text-red-500 hover:underline"
-                    >
-                      Quitar imagen
-                    </button>
-                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <label className="text-sm font-medium text-[var(--accent)]">Disponible</label>

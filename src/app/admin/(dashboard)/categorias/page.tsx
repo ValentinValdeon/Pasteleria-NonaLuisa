@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
 import { useToast } from "@/context/ToastContext";
 import { getImageUrl } from "@/lib/utils";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface ModalData {
   open: boolean;
@@ -70,8 +71,6 @@ export default function CategoriasPage() {
   const [modal, setModal] = useState<ModalData>(emptyModal);
   const [preview, setPreview] = useState<Category | null>(null);
   const [saving, setSaving] = useState(false);
-  const uploadRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
 
   const fetchCategories = async () => {
     const { data } = await supabase.from("categories").select("*").order("name");
@@ -117,23 +116,6 @@ export default function CategoriasPage() {
     setSaving(false);
     setModal(emptyModal());
     fetchCategories();
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const filePath = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("product-images").upload(filePath, file);
-    if (error) {
-      addToast("Error al subir imagen", "error");
-      setUploading(false);
-      return;
-    }
-    const { data: { publicUrl } } = supabase.storage.from("product-images").getPublicUrl(filePath);
-    setModal({ ...modal, image_url: publicUrl });
-    setUploading(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -239,40 +221,11 @@ export default function CategoriasPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--accent)] mb-1">Imagen</label>
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0 flex items-center justify-center">
-                      {modal.image_url ? (
-                        <img src={modal.image_url} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <UploadIcon />
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      ref={uploadRef}
-                      onChange={handleImageUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <div className="flex flex-col gap-1.5">
-                      <button
-                        onClick={() => uploadRef.current?.click()}
-                        disabled={uploading}
-                        className="px-3 py-2 min-h-[44px] rounded-full text-sm font-medium bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors disabled:opacity-50 flex items-center gap-1.5"
-                      >
-                        <UploadIcon />
-                        {uploading ? "Subiendo..." : "Subir"}
-                      </button>
-                      {modal.image_url && (
-                        <button
-                          onClick={() => setModal({ ...modal, image_url: "" })}
-                          className="text-xs text-red-500 hover:underline text-left"
-                        >
-                          Quitar imagen
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <ImageUploader
+                    onUpload={(url) => setModal({ ...modal, image_url: url })}
+                    onRemove={() => setModal({ ...modal, image_url: "" })}
+                    currentUrl={modal.image_url}
+                  />
                 </div>
               </div>
 

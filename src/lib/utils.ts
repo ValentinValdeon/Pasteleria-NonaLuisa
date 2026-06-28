@@ -9,5 +9,5 @@ export function getImageUrl(
 ): string | null {
   if (!url) return null;
   const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}width=${width}&quality=${quality}`;
+  return `${url}${separator}width=${width}&quality=${quality}&format=webp`;
 }
