@@ -352,17 +352,17 @@ export default function CombosPage() {
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!combo.available ? "line-through opacity-50" : ""}`}>
                       {combo.name}
                     </p>
-                    {combo.has_unavailable && (
-                      <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full shrink-0 font-medium">
-                        Prod. no disponible
-                      </span>
-                    )}
                   </div>
                   <p className="text-sm text-[var(--accent)] truncate">
                     {combo.items.map((i) => i.product_name).join(", ")}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="font-bold text-[var(--primary)] text-sm">{formatPrice(combo.price)}</span>
+                    {combo.has_unavailable && (
+                      <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full font-medium">
+                        Prod. no disponible
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
