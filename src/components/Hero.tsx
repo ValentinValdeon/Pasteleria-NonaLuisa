@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -33,14 +34,16 @@ export default function Hero() {
           renderBullet: (_, className) =>
             `<span class="${className} !bg-white/40 !opacity-100 hover:!bg-white/70 [&.swiper-pagination-bullet-active]:!bg-white [&.swiper-pagination-bullet-active]:!scale-110"></span>`,
         }}
-        className="absolute inset-0 w-full h-full [&_.swiper-wrapper]:!h-full [&_.swiper-slide]:!h-full"
+        className="absolute inset-0 w-full h-full [&_.swiper-wrapper]:!h-full [&_.swiper-slide]:!h-full [&_.swiper-slide]:!relative"
       >
         {HERO_IMAGES.map((img, i) => (
           <SwiperSlide key={i}>
-            <img
+            <Image
               src={img.src}
               alt={img.alt}
-              className="w-full h-full object-cover"
+              fill
+              sizes="100vw"
+              className="object-cover"
             />
           </SwiperSlide>
         ))}
