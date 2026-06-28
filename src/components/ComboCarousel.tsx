@@ -35,7 +35,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             Combos Destacados
           </h2>
           <div className="flex justify-center">
-            <div className="w-[65vw] sm:w-[260px] h-[360px]">
+            <div className="w-[65vw] sm:w-[260px] h-[300px]">
               <ComboCard
                 id={combos[0].id}
                 name={combos[0].name}
@@ -95,7 +95,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       const p = Math.min(absDist / maxDist, 1);
       const dir = dist > 0 ? 1 : dist < 0 ? -1 : 0;
 
-      const scale = 1.08 - p * 0.16;
+      const scale = 1.04 - p * 0.11;
       card.style.transform = `perspective(800px) rotateY(${dir * p * 15}deg) translateZ(${-p * 60}px) scale(${scale})`;
       card.style.zIndex = Math.round((1 - p) * 10).toString();
     }
@@ -182,7 +182,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
 
     const onMove = (e: PointerEvent) => {
       if (!isDown || !e.isPrimary) return;
-      moveTrack(startTranslate + (e.clientX - startX) * 1.5, false);
+      moveTrack(startTranslate + (e.clientX - startX) * 1.75, false);
       applyTransforms();
     };
 
@@ -224,7 +224,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               {extended.map((combo) => (
                 <div
                   key={combo._key}
-                  className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[360px]"
+                  className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
                 >
                   <ComboCard
                     id={combo.id}
