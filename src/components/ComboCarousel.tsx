@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
@@ -19,13 +19,14 @@ interface ComboCarouselProps {
 
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const [showHint, setShowHint] = useState(true);
-  const initialSlide = useRef(true);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
 
   const handleSlideChange = () => {
-    if (initialSlide.current) {
-      initialSlide.current = false;
-      return;
-    }
+    if (!mounted.current) return;
     setShowHint(false);
   };
 
