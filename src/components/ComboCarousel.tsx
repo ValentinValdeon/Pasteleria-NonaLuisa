@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
-import type { Swiper as SwiperClass } from "swiper";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import ComboCard from "./ComboCard";
@@ -20,14 +19,15 @@ interface ComboCarouselProps {
 
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const [showHint, setShowHint] = useState(true);
+  const initialSlide = useRef(true);
 
-  useEffect(() => {
-    if (!showHint) return;
-    const id = setTimeout(() => setShowHint(false), 4000);
-    return () => clearTimeout(id);
-  }, [showHint]);
-
-  const handleSlideChange = () => setShowHint(false);
+  const handleSlideChange = () => {
+    if (initialSlide.current) {
+      initialSlide.current = false;
+      return;
+    }
+    setShowHint(false);
+  };
 
   return (
     <section className="py-12 bg-white relative">
