@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
@@ -19,16 +19,14 @@ interface ComboCarouselProps {
 
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const [showHint, setShowHint] = useState(true);
-  const mounted = useRef(false);
 
   useEffect(() => {
-    mounted.current = true;
-  }, []);
+    if (combos.length === 0) return;
+    const id = setTimeout(() => setShowHint(false), 6000);
+    return () => clearTimeout(id);
+  }, [combos.length]);
 
-  const handleSlideChange = () => {
-    if (!mounted.current) return;
-    setShowHint(false);
-  };
+  const handleUserInteraction = () => setShowHint(false);
 
   return (
     <section className="py-12 bg-white relative">
@@ -50,7 +48,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               slideShadows: false,
             }}
             modules={[EffectCoverflow]}
-            onSlideChange={handleSlideChange}
+            onTouchStart={handleUserInteraction}
           >
             {combos.map((combo) => (
               <SwiperSlide key={combo.id} className="!w-[85vw] sm:!w-[320px] !h-auto pb-4">
