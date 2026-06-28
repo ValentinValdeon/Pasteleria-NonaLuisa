@@ -27,7 +27,7 @@ export default function Hero() {
         modules={[Autoplay, Pagination]}
         loop
         speed={800}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
         pagination={{
           clickable: true,
           renderBullet: (_, className) =>
