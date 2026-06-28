@@ -13,32 +13,70 @@ interface ComboCarouselProps {
   }>;
 }
 
+const GAP = 16;
+
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const activeRef = useRef(0);
+  const translateXRef = useRef(0);
+  const animRef = useRef(0);
 
-  const snapToNearest = useCallback(() => {
-    const vp = viewportRef.current;
+  const TOTAL = combos.length;
+
+  if (TOTAL === 0) return null;
+
+  if (TOTAL === 1) {
+    return (
+      <section className="py-12 bg-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+            Combos Destacados
+          </h2>
+          <div className="flex justify-center">
+            <div className="w-[65vw] sm:w-[260px]">
+              <ComboCard
+                id={combos[0].id}
+                name={combos[0].name}
+                description={combos[0].description ?? ""}
+                price={Number(combos[0].price)}
+                image_url={combos[0].image_url}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const extended = combos.map((c, i) => ({ ...c, _key: `${c.id}-${i}` }));
+  extended.unshift({ ...combos[TOTAL - 1], _key: `${combos[TOTAL - 1].id}-cp` });
+  extended.push({ ...combos[0], _key: `${combos[0].id}-cn` });
+
+  const getCardWidth = useCallback((): number => {
+    if (!trackRef.current || trackRef.current.children.length === 0) return 260;
+    return (trackRef.current.children[0] as HTMLElement).offsetWidth;
+  }, []);
+
+  const getTranslateX = useCallback(
+    (index: number): number => {
+      const vp = viewportRef.current;
+      if (!vp) return 0;
+      const cw = getCardWidth();
+      return vp.clientWidth / 2 - cw / 2 - index * (cw + GAP);
+    },
+    [getCardWidth],
+  );
+
+  const moveTrack = useCallback((x: number, smooth: boolean) => {
     const track = trackRef.current;
-    if (!vp || !track || track.children.length === 0) return;
-
-    const viewCenter = vp.scrollLeft + vp.clientWidth / 2;
-    let nearest = track.children[0] as HTMLElement;
-    let nearestDist = Infinity;
-
-    for (let i = 0; i < track.children.length; i++) {
-      const card = track.children[i] as HTMLElement;
-      const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - viewCenter);
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearest = card;
-      }
-    }
-
-    const target = nearest.offsetLeft + nearest.offsetWidth / 2 - vp.clientWidth / 2;
-    if (Math.abs(vp.scrollLeft - target) > 2) {
-      vp.scrollTo({ left: target, behavior: "smooth" });
-    }
+    if (!track) return;
+    track.style.transition = smooth
+      ? "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+      : "none";
+    track.style.transform = `translateX(${x}px)`;
+    translateXRef.current = x;
   }, []);
 
   const applyTransforms = useCallback(() => {
@@ -46,7 +84,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     const track = trackRef.current;
     if (!vp || !track) return;
 
-    const viewCenter = vp.scrollLeft + vp.clientWidth / 2;
+    const viewCenter = -translateXRef.current + vp.clientWidth / 2;
     const maxDist = vp.clientWidth * 0.55;
 
     for (let i = 0; i < track.children.length; i++) {
@@ -62,43 +100,65 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     }
   }, []);
 
-  useEffect(() => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-
-    let t: NodeJS.Timeout;
-    const onScroll = () => {
+  const centerAtIndex = useCallback(
+    (index: number, smooth: boolean) => {
+      const x = getTranslateX(index);
+      moveTrack(x, smooth);
+      activeRef.current = index;
       applyTransforms();
-      clearTimeout(t);
-      t = setTimeout(snapToNearest, 100);
-    };
+    },
+    [getTranslateX, moveTrack, applyTransforms],
+  );
 
-    vp.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      vp.removeEventListener("scroll", onScroll);
-      clearTimeout(t);
-    };
-  }, [applyTransforms, snapToNearest]);
-
-  useEffect(() => {
-    applyTransforms();
-
+  const snapToNearest = useCallback(() => {
     const vp = viewportRef.current;
     const track = trackRef.current;
-    if (vp && track && track.children.length > 0) {
-      const first = track.children[0] as HTMLElement;
-      const target = first.offsetLeft + first.offsetWidth / 2 - vp.clientWidth / 2;
-      if (Math.abs(vp.scrollLeft - target) > 2) {
-        vp.scrollLeft = target;
+    if (!vp || !track || track.children.length === 0) return;
+
+    const cw = getCardWidth();
+    const step = cw + GAP;
+    const viewCenter = -translateXRef.current + vp.clientWidth / 2;
+
+    let nearestIdx = activeRef.current;
+    let nearestDist = Infinity;
+
+    for (let i = 0; i < track.children.length; i++) {
+      const cardCenter = (track.children[i] as HTMLElement).offsetLeft + cw / 2;
+      const dist = Math.abs(cardCenter - viewCenter);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearestIdx = i;
       }
     }
-  }, [applyTransforms]);
+
+    centerAtIndex(nearestIdx, true);
+
+    const id = ++animRef.current;
+    setTimeout(() => {
+      if (animRef.current !== id) return;
+      if (nearestIdx === 0) {
+        centerAtIndex(TOTAL, false);
+      } else if (nearestIdx === TOTAL + 1) {
+        centerAtIndex(1, false);
+      }
+    }, 350);
+  }, [TOTAL, getCardWidth, centerAtIndex]);
 
   useEffect(() => {
-    const onResize = () => applyTransforms();
+    const initial = 1 + Math.floor((TOTAL - 1) / 2);
+    activeRef.current = initial;
+    translateXRef.current = getTranslateX(initial);
+    moveTrack(translateXRef.current, false);
+    applyTransforms();
+  }, [TOTAL, getTranslateX, moveTrack, applyTransforms]);
+
+  useEffect(() => {
+    const onResize = () => {
+      centerAtIndex(activeRef.current, false);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [applyTransforms]);
+  }, [centerAtIndex]);
 
   useEffect(() => {
     const vp = viewportRef.current;
@@ -106,24 +166,29 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
 
     let isDown = false;
     let startX = 0;
-    let scrollStart = 0;
+    let startTranslate = 0;
 
     const onDown = (e: PointerEvent) => {
-      if (!e.isPrimary || e.pointerType !== "mouse") return;
+      if (!e.isPrimary) return;
       isDown = true;
+      isDragging.current = true;
       startX = e.clientX;
-      scrollStart = vp.scrollLeft;
+      startTranslate = translateXRef.current;
+      animRef.current++;
+      moveTrack(startTranslate, false);
       vp.setPointerCapture(e.pointerId);
     };
 
     const onMove = (e: PointerEvent) => {
       if (!isDown || !e.isPrimary) return;
-      vp.scrollLeft = scrollStart + (startX - e.clientX);
+      moveTrack(startTranslate + (e.clientX - startX), false);
+      applyTransforms();
     };
 
     const onUp = () => {
       if (!isDown) return;
       isDown = false;
+      isDragging.current = false;
       snapToNearest();
     };
 
@@ -136,9 +201,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [snapToNearest]);
-
-  if (combos.length === 0) return null;
+  }, [moveTrack, applyTransforms, snapToNearest]);
 
   return (
     <section className="py-12 bg-white overflow-hidden">
@@ -150,13 +213,16 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         <div className="relative">
           <div
             ref={viewportRef}
-            className="overflow-x-auto overflow-y-hidden cursor-grab select-none scrollbar-none"
-            style={{ WebkitOverflowScrolling: "touch" }}
+            className="overflow-hidden cursor-grab select-none"
+            style={{ touchAction: "pan-y" }}
           >
-            <div ref={trackRef} className="flex gap-4 pb-4">
-              {combos.map((combo) => (
+            <div
+              ref={trackRef}
+              className="flex gap-4 pb-4 will-change-transform"
+            >
+              {extended.map((combo) => (
                 <div
-                  key={combo.id}
+                  key={combo._key}
                   className="flex-shrink-0 w-[65vw] sm:w-[260px]"
                 >
                   <ComboCard
