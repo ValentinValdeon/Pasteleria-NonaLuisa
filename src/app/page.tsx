@@ -8,6 +8,14 @@ import CartWrapper from "@/components/CartWrapper";
 
 export const dynamic = "force-dynamic";
 
+function SectionDivider() {
+  return (
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="h-px bg-gradient-to-r from-transparent via-[var(--primary-light)]/50 to-transparent" />
+    </div>
+  );
+}
+
 export default async function Home() {
   const supabase = createPublicClient();
 
@@ -36,9 +44,15 @@ export default async function Home() {
       <Header />
       <Hero />
 
+      <SectionDivider />
+
       {combos.length > 0 && <ComboCarousel combos={combos} />}
 
+      <SectionDivider />
+
       <ProductGrid products={products.map((p) => ({ ...p, price: Number(p.price) }))} categories={categories} />
+
+      <SectionDivider />
 
       <Footer />
     </CartWrapper>

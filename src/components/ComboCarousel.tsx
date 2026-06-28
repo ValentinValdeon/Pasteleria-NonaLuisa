@@ -51,12 +51,9 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     [getCardWidth],
   );
 
-  const moveTrack = useCallback((x: number, smooth: boolean) => {
+  const moveTrack = useCallback((x: number) => {
     const track = trackRef.current;
     if (!track) return;
-    track.style.transition = smooth
-      ? "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
-      : "none";
     track.style.transform = `translateX(${x}px)`;
     translateXRef.current = x;
   }, []);
@@ -83,31 +80,60 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     }
   }, []);
 
-  const centerAtIndex = useCallback(
-    (index: number, smooth: boolean) => {
-      const x = getTranslateX(index);
-      moveTrack(x, smooth);
-      activeRef.current = index;
+  const centerInstantly = useCallback((index: number) => {
+    const x = getTranslateX(index);
+    moveTrack(x);
+    activeRef.current = index;
+    applyTransforms();
+  }, [getTranslateX, moveTrack, applyTransforms]);
+
+  const smoothSnap = useCallback((targetIdx: number) => {
+    const from = translateXRef.current;
+    const to = getTranslateX(targetIdx);
+    const duration = 400;
+    const start = performance.now();
+    const id = ++animRef.current;
+
+    const tick = (now: number) => {
+      if (animRef.current !== id) return;
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const x = from + (to - from) * ease;
+
+      moveTrack(x);
       applyTransforms();
-    },
-    [getTranslateX, moveTrack, applyTransforms],
-  );
+
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        activeRef.current = targetIdx;
+        if (targetIdx === 0) {
+          centerInstantly(TOTAL);
+        } else if (targetIdx === TOTAL + 1) {
+          centerInstantly(1);
+        }
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }, [getTranslateX, moveTrack, applyTransforms, centerInstantly, TOTAL]);
 
   useEffect(() => {
     if (fitAll || TOTAL <= 1) return;
     const initial = 1 + Math.floor((TOTAL - 1) / 2);
-    activeRef.current = initial;
     translateXRef.current = getTranslateX(initial);
-    moveTrack(translateXRef.current, false);
+    moveTrack(translateXRef.current);
+    activeRef.current = initial;
     applyTransforms();
   }, [TOTAL, getTranslateX, moveTrack, applyTransforms, fitAll]);
 
   useEffect(() => {
     if (fitAll) return;
-    const onResize = () => centerAtIndex(activeRef.current, false);
+    const onResize = () => centerInstantly(activeRef.current);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [centerAtIndex, fitAll]);
+  }, [centerInstantly, fitAll]);
 
   useEffect(() => {
     if (fitAll || TOTAL <= 1) return;
@@ -125,13 +151,13 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       startX = e.clientX;
       startTranslate = translateXRef.current;
       animRef.current++;
-      moveTrack(startTranslate, false);
+      moveTrack(startTranslate);
       vp.setPointerCapture(e.pointerId);
     };
 
     const onMove = (e: PointerEvent) => {
       if (!isDown || !e.isPrimary) return;
-      moveTrack(startTranslate + (e.clientX - startX) * 1.75, false);
+      moveTrack(startTranslate + (e.clientX - startX) * 1.75);
       applyTransforms();
     };
 
@@ -148,17 +174,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
           : Math.min(TOTAL + 1, activeRef.current + 1);
       }
 
-      centerAtIndex(targetIdx, true);
-
-      const id = ++animRef.current;
-      setTimeout(() => {
-        if (animRef.current !== id) return;
-        if (targetIdx === 0) {
-          centerAtIndex(TOTAL, false);
-        } else if (targetIdx === TOTAL + 1) {
-          centerAtIndex(1, false);
-        }
-      }, 350);
+      smoothSnap(targetIdx);
     };
 
     vp.addEventListener("pointerdown", onDown);
@@ -170,18 +186,18 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [TOTAL, moveTrack, applyTransforms, centerAtIndex, fitAll]);
+  }, [TOTAL, moveTrack, applyTransforms, smoothSnap, fitAll]);
 
   if (TOTAL === 0) return null;
 
   if (fitAll) {
     return (
-      <section className="py-12 bg-white overflow-hidden">
+      <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
             Combos Destacados
           </h2>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 pt-4">
             {combos.map((combo) => (
               <div
                 key={combo.id}
@@ -204,12 +220,12 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
 
   if (TOTAL === 1) {
     return (
-      <section className="py-12 bg-white overflow-hidden">
+      <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
             Combos Destacados
           </h2>
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-4">
             <div className="w-[65vw] sm:w-[260px] h-[300px]">
               <ComboCard
                 id={combos[0].id}
@@ -230,12 +246,12 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
   extended.push({ ...combos[0], _key: `${combos[0].id}-cn` });
 
   return (
-    <section className="py-12 bg-white overflow-hidden">
+    <section className="py-16 bg-white overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
           Combos Destacados
         </h2>
-        <div className="relative">
+        <div className="relative pt-4">
           <div
             ref={viewportRef}
             className="overflow-hidden cursor-grab select-none"
@@ -243,7 +259,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
           >
             <div
               ref={trackRef}
-              className="flex gap-4 pb-4 will-change-transform"
+              className="flex gap-4 will-change-transform"
             >
               {extended.map((combo) => (
                 <div
