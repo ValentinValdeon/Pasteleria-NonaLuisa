@@ -22,7 +22,7 @@ const HERO_IMAGES = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[50vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[50vh] md:h-[70vh] overflow-hidden">
       <Swiper
         modules={[Autoplay, Pagination]}
         loop
@@ -30,9 +30,9 @@ export default function Hero() {
         pagination={{
           clickable: true,
           renderBullet: (_, className) =>
-            `<button class="${className} w-3 h-3 rounded-full bg-white/40 transition-all duration-300 hover:bg-white/70 [&.swiper-pagination-bullet-active]:bg-white [&.swiper-pagination-bullet-active]:scale-110"></button>`,
+            `<span class="${className} !bg-white/40 !opacity-100 hover:!bg-white/70 [&.swiper-pagination-bullet-active]:!bg-white [&.swiper-pagination-bullet-active]:!scale-110"></span>`,
         }}
-        className="absolute inset-0 w-full h-full [&_.swiper-slide]:!h-full"
+        className="absolute inset-0 w-full h-full [&_.swiper-wrapper]:!h-full [&_.swiper-slide]:!h-full"
       >
         {HERO_IMAGES.map((img, i) => (
           <SwiperSlide key={i}>
@@ -45,23 +45,23 @@ export default function Hero() {
         ))}
       </Swiper>
 
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/45 z-10" />
 
-      {/* Content */}
-      <div className="relative z-20 text-center px-4 max-w-2xl animate-fade-in">
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold font-[family-name:var(--font-playfair)] text-white mb-3 md:mb-4">
-          Delicias Artesanales
-        </h1>
-        <p className="text-base md:text-xl text-white/90 mb-6 md:mb-8 max-w-md mx-auto">
-          Productos horneados con amor, todos los días
-        </p>
-        <a
-          href="#productos"
-          className="inline-block bg-[var(--primary)] text-white px-8 py-3 rounded-full font-semibold hover:bg-[var(--accent)] transition-colors text-base md:text-lg"
-        >
-          Ver Productos
-        </a>
+      <div className="absolute inset-0 z-20 flex items-center justify-center">
+        <div className="text-center px-4 max-w-2xl animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold font-[family-name:var(--font-playfair)] text-white mb-3 md:mb-4">
+            Delicias Artesanales
+          </h1>
+          <p className="text-base md:text-xl text-white/90 mb-6 md:mb-8 max-w-md mx-auto">
+            Productos horneados con amor, todos los días
+          </p>
+          <a
+            href="#productos"
+            className="inline-block bg-[var(--primary)] text-white px-8 py-3 rounded-full font-semibold hover:bg-[var(--accent)] transition-colors text-base md:text-lg"
+          >
+            Ver Productos
+          </a>
+        </div>
       </div>
     </section>
   );
