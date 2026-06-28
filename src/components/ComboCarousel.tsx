@@ -18,28 +18,29 @@ interface ComboCarouselProps {
 
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-white overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
           Combos Destacados
         </h2>
         <div className="relative">
           <Swiper
+            className="!overflow-visible"
             effect="coverflow"
             centeredSlides
             slidesPerView="auto"
             loop
             coverflowEffect={{
-              rotate: 30,
+              rotate: 20,
               stretch: 0,
               depth: 80,
-              modifier: 2,
+              modifier: 1,
               slideShadows: false,
             }}
             modules={[EffectCoverflow]}
           >
             {combos.map((combo) => (
-              <SwiperSlide key={combo.id} className="!w-[85vw] sm:!w-[320px] !h-auto pb-4">
+              <SwiperSlide key={combo.id} className="!w-[70vw] sm:!w-[280px] !h-auto pb-4">
                 <ComboCard
                   id={combo.id}
                   name={combo.name}
