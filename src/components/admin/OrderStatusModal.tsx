@@ -50,13 +50,13 @@ export default function OrderStatusModal({
     if (action !== "parcial" || items.length === 0) return;
     const missingItems = items.filter((i) => missingIds.includes(i.id));
     if (missingItems.length === 0) {
-      setMessage(`Disponemos de todo tu pedido. El total sería ${formatPrice(total)}. Pagá al alias: ${alias}. ¿Te sirve?`);
+      setMessage(`Disponemos de todo tu pedido. El total sería ${formatPrice(total)}. Pagá al alias: ${alias}. ¿Te parece bien?`);
       return;
     }
     const availableTotal = items
       .filter((i) => !missingIds.includes(i.id))
       .reduce((sum, i) => sum + Number(i.item_price) * i.quantity, 0);
-    const msg = `Falta${missingItems.length === 1 ? "" : "n"}: ${missingItems.map((i) => `${i.item_name} x${i.quantity}`).join(", ")}. Disponemos del resto por ${formatPrice(availableTotal)}. Pagá al alias: ${alias}. ¿Te sirve?`;
+    const msg = `Falta${missingItems.length === 1 ? "" : "n"}: ${missingItems.map((i) => `${i.item_name} x${i.quantity}`).join(", ")}. Disponemos del resto por ${formatPrice(availableTotal)}. Pagá al alias: ${alias}. ¿Te parece bien?`;
     setMessage(msg);
   }, [missingIds, items, total, alias, action]);
 
