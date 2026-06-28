@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import ComboCard from "./ComboCard";
 
 interface ComboCarouselProps {
@@ -18,41 +18,23 @@ const GAP = 16;
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
   const activeRef = useRef(0);
   const translateXRef = useRef(0);
   const animRef = useRef(0);
+  const [fitAll, setFitAll] = useState(false);
 
   const TOTAL = combos.length;
 
-  if (TOTAL === 0) return null;
-
-  if (TOTAL === 1) {
-    return (
-      <section className="py-12 bg-white overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
-            Combos Destacados
-          </h2>
-          <div className="flex justify-center">
-            <div className="w-[65vw] sm:w-[260px] h-[300px]">
-              <ComboCard
-                id={combos[0].id}
-                name={combos[0].name}
-                description={combos[0].description ?? ""}
-                price={Number(combos[0].price)}
-                image_url={combos[0].image_url}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const extended = combos.map((c, i) => ({ ...c, _key: `${c.id}-${i}` }));
-  extended.unshift({ ...combos[TOTAL - 1], _key: `${combos[TOTAL - 1].id}-cp` });
-  extended.push({ ...combos[0], _key: `${combos[0].id}-cn` });
+  useEffect(() => {
+    const check = () => {
+      const cw = window.innerWidth < 640 ? window.innerWidth * 0.65 : 260;
+      const totalW = TOTAL * (cw + GAP) - GAP;
+      setFitAll(totalW <= (viewportRef.current?.clientWidth ?? window.innerWidth));
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [TOTAL]);
 
   const getCardWidth = useCallback((): number => {
     if (!trackRef.current || trackRef.current.children.length === 0) return 260;
@@ -94,8 +76,8 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       const absDist = Math.abs(dist);
       const p = Math.min(absDist / maxDist, 1);
       const dir = dist > 0 ? 1 : dist < 0 ? -1 : 0;
-
       const scale = 1.04 - p * 0.11;
+
       card.style.transform = `perspective(800px) rotateY(${dir * p * 15}deg) translateZ(${-p * 60}px) scale(${scale})`;
       card.style.zIndex = Math.round((1 - p) * 10).toString();
     }
@@ -111,57 +93,25 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     [getTranslateX, moveTrack, applyTransforms],
   );
 
-  const snapToNearest = useCallback(() => {
-    const vp = viewportRef.current;
-    const track = trackRef.current;
-    if (!vp || !track || track.children.length === 0) return;
-
-    const cw = getCardWidth();
-    const step = cw + GAP;
-    const viewCenter = -translateXRef.current + vp.clientWidth / 2;
-
-    let nearestIdx = activeRef.current;
-    let nearestDist = Infinity;
-
-    for (let i = 0; i < track.children.length; i++) {
-      const cardCenter = (track.children[i] as HTMLElement).offsetLeft + cw / 2;
-      const dist = Math.abs(cardCenter - viewCenter);
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearestIdx = i;
-      }
-    }
-
-    centerAtIndex(nearestIdx, true);
-
-    const id = ++animRef.current;
-    setTimeout(() => {
-      if (animRef.current !== id) return;
-      if (nearestIdx === 0) {
-        centerAtIndex(TOTAL, false);
-      } else if (nearestIdx === TOTAL + 1) {
-        centerAtIndex(1, false);
-      }
-    }, 350);
-  }, [TOTAL, getCardWidth, centerAtIndex]);
-
   useEffect(() => {
+    if (fitAll || TOTAL <= 1) return;
     const initial = 1 + Math.floor((TOTAL - 1) / 2);
     activeRef.current = initial;
     translateXRef.current = getTranslateX(initial);
     moveTrack(translateXRef.current, false);
     applyTransforms();
-  }, [TOTAL, getTranslateX, moveTrack, applyTransforms]);
+  }, [TOTAL, getTranslateX, moveTrack, applyTransforms, fitAll]);
 
   useEffect(() => {
-    const onResize = () => {
-      centerAtIndex(activeRef.current, false);
-    };
+    if (fitAll) return;
+    const onResize = () => centerAtIndex(activeRef.current, false);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [centerAtIndex]);
+  }, [centerAtIndex, fitAll]);
 
   useEffect(() => {
+    if (fitAll || TOTAL <= 1) return;
+
     const vp = viewportRef.current;
     if (!vp) return;
 
@@ -172,7 +122,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     const onDown = (e: PointerEvent) => {
       if (!e.isPrimary) return;
       isDown = true;
-      isDragging.current = true;
       startX = e.clientX;
       startTranslate = translateXRef.current;
       animRef.current++;
@@ -186,11 +135,30 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       applyTransforms();
     };
 
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
       if (!isDown) return;
       isDown = false;
-      isDragging.current = false;
-      snapToNearest();
+
+      const dx = e.clientX - startX;
+      let targetIdx = activeRef.current;
+
+      if (Math.abs(dx) > 15) {
+        targetIdx = dx > 0
+          ? Math.max(0, activeRef.current - 1)
+          : Math.min(TOTAL + 1, activeRef.current + 1);
+      }
+
+      centerAtIndex(targetIdx, true);
+
+      const id = ++animRef.current;
+      setTimeout(() => {
+        if (animRef.current !== id) return;
+        if (targetIdx === 0) {
+          centerAtIndex(TOTAL, false);
+        } else if (targetIdx === TOTAL + 1) {
+          centerAtIndex(1, false);
+        }
+      }, 350);
     };
 
     vp.addEventListener("pointerdown", onDown);
@@ -202,7 +170,64 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [moveTrack, applyTransforms, snapToNearest]);
+  }, [TOTAL, moveTrack, applyTransforms, centerAtIndex, fitAll]);
+
+  if (TOTAL === 0) return null;
+
+  if (fitAll) {
+    return (
+      <section className="py-12 bg-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+            Combos Destacados
+          </h2>
+          <div className="flex justify-center gap-4">
+            {combos.map((combo) => (
+              <div
+                key={combo.id}
+                className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
+              >
+                <ComboCard
+                  id={combo.id}
+                  name={combo.name}
+                  description={combo.description ?? ""}
+                  price={Number(combo.price)}
+                  image_url={combo.image_url}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (TOTAL === 1) {
+    return (
+      <section className="py-12 bg-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+            Combos Destacados
+          </h2>
+          <div className="flex justify-center">
+            <div className="w-[65vw] sm:w-[260px] h-[300px]">
+              <ComboCard
+                id={combos[0].id}
+                name={combos[0].name}
+                description={combos[0].description ?? ""}
+                price={Number(combos[0].price)}
+                image_url={combos[0].image_url}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const extended = combos.map((c, i) => ({ ...c, _key: `${c.id}-${i}` }));
+  extended.unshift({ ...combos[TOTAL - 1], _key: `${combos[TOTAL - 1].id}-cp` });
+  extended.push({ ...combos[0], _key: `${combos[0].id}-cn` });
 
   return (
     <section className="py-12 bg-white overflow-hidden">
@@ -210,7 +235,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
           Combos Destacados
         </h2>
-
         <div className="relative">
           <div
             ref={viewportRef}
