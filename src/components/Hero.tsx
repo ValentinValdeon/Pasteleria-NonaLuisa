@@ -26,7 +26,8 @@ export default function Hero() {
       <Swiper
         modules={[Autoplay, Pagination]}
         loop
-        autoplay={{ delay: 6000, disableOnInteraction: false }}
+        speed={800}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{
           clickable: true,
           renderBullet: (_, className) =>
@@ -45,7 +46,7 @@ export default function Hero() {
         ))}
       </Swiper>
 
-      <div className="absolute inset-0 bg-black/45 z-10" />
+      <div className="absolute inset-0 bg-black/60 z-10" />
 
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <div className="text-center px-4 max-w-2xl animate-fade-in">
