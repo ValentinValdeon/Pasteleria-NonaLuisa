@@ -15,8 +15,10 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [delivery, setDelivery] = useState(false);
+  const [notifyWhatsApp, setNotifyWhatsApp] = useState(true);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sentWeb, setSentWeb] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,13 +63,17 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
       const { error: itemsErr } = await supabase.from("order_items").insert(orderItems);
       if (itemsErr) throw itemsErr;
 
-      setSent(true);
       clearCart();
 
-      const waMsg = encodeURIComponent(
-        `¡Hola! Soy ${name.trim()}.\n\n${items.map((i) => `• ${i.name} x${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${delivery ? "\n📍 Envío a domicilio" : ""}\n\nTel: ${phone.trim()}`
-      );
-      window.open(`https://wa.me/549${phone.trim()}?text=${waMsg}`, "_blank");
+      if (notifyWhatsApp) {
+        setSent(true);
+        const waMsg = encodeURIComponent(
+          `¡Hola! Soy ${name.trim()}.\n\n${items.map((i) => `• ${i.name} x${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${delivery ? "\n📍 Envío a domicilio" : ""}\n\nTel: ${phone.trim()}`
+        );
+        window.open(`https://wa.me/549${phone.trim()}?text=${waMsg}`, "_blank");
+      } else {
+        setSentWeb(true);
+      }
     } catch (err) {
       console.error(err);
       setError("Error al enviar el pedido. Intentá de nuevo.");
@@ -84,6 +90,18 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
         </svg>
         <p className="font-semibold text-[var(--foreground)]">Pedido enviado con éxito</p>
         <p className="text-sm text-[var(--accent)] mt-1">Te redirigimos a WhatsApp</p>
+      </div>
+    );
+  }
+
+  if (sentWeb) {
+    return (
+      <div className="text-center py-4">
+        <svg className="w-12 h-12 mx-auto mb-2 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <p className="font-semibold text-[var(--foreground)]">Pedido enviado con éxito</p>
+        <p className="text-sm text-[var(--accent)] mt-1">Te confirmaremos pronto</p>
       </div>
     );
   }
@@ -123,13 +141,30 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
         </div>
         <span className="text-sm text-[var(--accent)]">Enviar a domicilio</span>
       </label>
+      <label className="flex items-center gap-3 cursor-pointer py-1">
+        <div className="relative">
+          <input
+            type="checkbox"
+            checked={notifyWhatsApp}
+            onChange={(e) => setNotifyWhatsApp(e.target.checked)}
+            className="sr-only"
+          />
+          <div
+            className={`w-10 h-5 rounded-full transition-colors ${notifyWhatsApp ? "bg-green-500" : "bg-gray-300"}`}
+          />
+          <div
+            className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${notifyWhatsApp ? "translate-x-5" : ""}`}
+          />
+        </div>
+        <span className="text-sm text-[var(--accent)]">Notificarme por WhatsApp</span>
+      </label>
       {error && <p className="text-xs text-red-500">{error}</p>}
       <button
         type="submit"
         disabled={sending}
         className="w-full bg-[var(--primary)] text-white py-3 min-h-[44px] rounded-full font-semibold text-sm hover:bg-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {sending ? "Enviando..." : "Enviar Pedido"}
+        {sending ? "Enviando..." : notifyWhatsApp ? "Enviar por WhatsApp" : "Enviar Pedido"}
       </button>
     </form>
   );

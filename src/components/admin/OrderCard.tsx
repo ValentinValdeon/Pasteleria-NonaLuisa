@@ -179,6 +179,7 @@ export default function OrderCard({ order, alias }: OrderCardProps) {
       {modal && (
         <OrderStatusModal
           action={modal}
+          orderId={order.id}
           customerPhone={order.customer_phone}
           alias={alias}
           total={order.total}
