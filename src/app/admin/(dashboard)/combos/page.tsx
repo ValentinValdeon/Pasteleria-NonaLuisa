@@ -94,13 +94,6 @@ interface ComboWithItems extends Combo {
   has_unavailable: boolean;
 }
 
-<style>{`
-  @keyframes breathe-scale {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.4); }
-  }
-`}</style>
-
 export default function CombosPage() {
   const supabase = createClient();
   const [combos, setCombos] = useState<ComboWithItems[]>([]);
@@ -294,6 +287,12 @@ export default function CombosPage() {
 
   return (
     <>
+      <style>{`
+        @keyframes breathe-scale {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.4); }
+        }
+      `}</style>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
           Combos
@@ -356,7 +355,7 @@ export default function CombosPage() {
               >
                 {index === 0 && (
                   <div className="absolute -top-3 -right-3 z-10" style={{ animation: "breathe-scale 1.8s ease-in-out infinite" }}>
-                    <div className="bg-white rounded-full p-1.5 shadow-md">
+                    <div className="bg-white rounded-full p-1.5 shadow-md" style={{ transform: "rotate(45deg)" }}>
                       <svg className="w-7 h-7 text-[var(--primary)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
                       </svg>
