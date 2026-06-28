@@ -22,18 +22,25 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
 
   useEffect(() => {
     if (combos.length === 0) return;
-    const id = setTimeout(() => setShowHint(false), 6000);
+    const id = setTimeout(() => setShowHint(false), 8000);
     return () => clearTimeout(id);
   }, [combos.length]);
 
-  const handleUserInteraction = () => setShowHint(false);
-
   return (
-    <section className="py-12 bg-white relative">
+    <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
-          Combos Destacados
-        </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
+            Combos Destacados
+          </h2>
+          <span
+            className={`text-xs font-semibold text-[var(--primary)] bg-[var(--primary)]/10 px-2.5 py-1 rounded-full transition-opacity duration-500 ${
+              showHint ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            Desliza →
+          </span>
+        </div>
         <div className="relative">
           <Swiper
             effect="coverflow"
@@ -48,7 +55,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               slideShadows: false,
             }}
             modules={[EffectCoverflow]}
-            onTouchStart={handleUserInteraction}
           >
             {combos.map((combo) => (
               <SwiperSlide key={combo.id} className="!w-[85vw] sm:!w-[320px] !h-auto pb-4">
@@ -62,15 +68,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               </SwiperSlide>
             ))}
           </Swiper>
-
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 right-2 z-10 flex items-center gap-1 text-[var(--primary)] font-semibold text-sm bg-white/90 backdrop-blur px-3 py-2 rounded-full shadow-md transition-opacity duration-500 pointer-events-none ${
-              showHint ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <span>Desliza</span>
-            <span className="inline-block animate-bounce">→</span>
-          </div>
         </div>
       </div>
     </section>
