@@ -201,7 +201,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             {combos.map((combo) => (
               <div
                 key={combo.id}
-                className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[420px]"
+                className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
               >
                 <ComboCard
                   id={combo.id}
@@ -226,7 +226,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             Combos Destacados
           </h2>
           <div className="flex justify-center pt-4">
-            <div className="w-[65vw] sm:w-[260px] h-[420px]">
+            <div className="w-[65vw] sm:w-[260px] h-[300px]">
               <ComboCard
                 id={combos[0].id}
                 name={combos[0].name}
@@ -254,7 +254,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         <div className="relative pt-4">
           <div
             ref={viewportRef}
-            className="overflow-hidden cursor-grab select-none"
+            className="overflow-hidden cursor-grab select-none min-h-[480px]"
             style={{ touchAction: "pan-y" }}
           >
             <div
@@ -264,7 +264,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               {extended.map((combo) => (
                 <div
                   key={combo._key}
-                  className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[420px]"
+                  className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
                 >
                   <ComboCard
                     id={combo.id}
