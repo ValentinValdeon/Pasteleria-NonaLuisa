@@ -328,14 +328,21 @@ export default function ProductosPage() {
         </p>
       ) : (
         <div className="space-y-3">
-          {filtered.map((product) => {
+          {filtered.map((product, index) => {
             const imgSrc = getImageUrl(product.image_url, 80, 60);
             return (
               <div
                 key={product.id}
                 onClick={() => setPreview(product)}
-                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
+                className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors relative"
               >
+                {index === 0 && (
+                  <div className="absolute -top-2 -right-2 z-10 animate-pulse">
+                    <svg className="w-6 h-6 text-[var(--primary)] drop-shadow-lg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+                    </svg>
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className={`font-semibold text-[var(--foreground)] text-base transition-all duration-200 ${!product.available ? "line-through opacity-50" : ""}`}>
@@ -433,40 +440,29 @@ export default function ProductosPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--accent)] mb-1">Imagen</label>
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-lg bg-[var(--primary-light)]/20 overflow-hidden shrink-0 flex items-center justify-center">
-                      {modal.image_url ? (
-                        <img src={modal.image_url} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <UploadIcon />
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      ref={uploadRef}
-                      onChange={handleImageUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <div className="flex flex-col gap-1.5">
-                      <button
-                        onClick={() => uploadRef.current?.click()}
-                        disabled={uploading}
-                        className="px-3 py-2 min-h-[44px] rounded-full text-sm font-medium bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors disabled:opacity-50 flex items-center gap-1.5"
-                      >
-                        <UploadIcon />
-                        {uploading ? "Subiendo..." : "Subir"}
-                      </button>
-                      {modal.image_url && (
-                        <button
-                          onClick={() => setModal({ ...modal, image_url: "" })}
-                          className="text-xs text-red-500 hover:underline text-left"
-                        >
-                          Quitar imagen
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <input
+                    type="file"
+                    ref={uploadRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => uploadRef.current?.click()}
+                    disabled={uploading}
+                    className="w-full px-4 py-3 min-h-[44px] rounded-xl text-sm font-medium bg-[var(--primary-light)]/20 text-[var(--accent)] hover:bg-[var(--primary-light)]/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--primary-light)]/40"
+                  >
+                    <UploadIcon />
+                    {uploading ? "Subiendo..." : modal.image_url ? "Cambiar imagen" : "Seleccionar imagen"}
+                  </button>
+                  {modal.image_url && (
+                    <button
+                      onClick={() => setModal({ ...modal, image_url: "" })}
+                      className="mt-1.5 text-xs text-red-500 hover:underline"
+                    >
+                      Quitar imagen
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <label className="text-sm font-medium text-[var(--accent)]">Disponible</label>
