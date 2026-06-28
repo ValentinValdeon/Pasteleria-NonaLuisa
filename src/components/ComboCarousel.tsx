@@ -27,8 +27,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
           <Swiper
             effect="coverflow"
             centeredSlides
-            slidesPerView={1.15}
-            spaceBetween={8}
+            slidesPerView="auto"
             loop
             coverflowEffect={{
               rotate: 30,
@@ -40,7 +39,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             modules={[EffectCoverflow]}
           >
             {combos.map((combo) => (
-              <SwiperSlide key={combo.id} className="!h-auto pb-4">
+              <SwiperSlide key={combo.id} className="!w-[85vw] sm:!w-[320px] !h-auto pb-4">
                 <ComboCard
                   id={combo.id}
                   name={combo.name}
