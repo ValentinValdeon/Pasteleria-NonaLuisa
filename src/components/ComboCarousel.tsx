@@ -24,12 +24,11 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
           Combos Destacados
         </h2>
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-4 w-16 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
           <Swiper
             effect="coverflow"
             centeredSlides
-            slidesPerView="auto"
+            slidesPerView={1.15}
+            spaceBetween={8}
             loop
             coverflowEffect={{
               rotate: 30,
@@ -41,7 +40,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             modules={[EffectCoverflow]}
           >
             {combos.map((combo) => (
-              <SwiperSlide key={combo.id} className="!w-[85vw] sm:!w-[320px] !h-auto pb-4">
+              <SwiperSlide key={combo.id} className="!h-auto pb-4">
                 <ComboCard
                   id={combo.id}
                   name={combo.name}
