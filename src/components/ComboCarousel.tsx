@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import ComboCard from "./ComboCard";
 
 interface ComboCarouselProps {
@@ -16,18 +16,38 @@ interface ComboCarouselProps {
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [hasOverflow, setHasOverflow] = useState(false);
+
+  const snapToNearest = useCallback(() => {
+    const vp = viewportRef.current;
+    const track = trackRef.current;
+    if (!vp || !track || track.children.length === 0) return;
+
+    const viewCenter = vp.scrollLeft + vp.clientWidth / 2;
+    let nearest = track.children[0] as HTMLElement;
+    let nearestDist = Infinity;
+
+    for (let i = 0; i < track.children.length; i++) {
+      const card = track.children[i] as HTMLElement;
+      const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - viewCenter);
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = card;
+      }
+    }
+
+    const target = nearest.offsetLeft + nearest.offsetWidth / 2 - vp.clientWidth / 2;
+    if (Math.abs(vp.scrollLeft - target) > 2) {
+      vp.scrollTo({ left: target, behavior: "smooth" });
+    }
+  }, []);
 
   const applyTransforms = useCallback(() => {
-    const viewport = viewportRef.current;
+    const vp = viewportRef.current;
     const track = trackRef.current;
-    if (!viewport || !track) return;
+    if (!vp || !track) return;
 
-    const viewCenter = viewport.scrollLeft + viewport.clientWidth / 2;
-    const maxDist = viewport.clientWidth * 0.55;
+    const viewCenter = vp.scrollLeft + vp.clientWidth / 2;
+    const maxDist = vp.clientWidth * 0.55;
 
     for (let i = 0; i < track.children.length; i++) {
       const card = track.children[i] as HTMLElement;
@@ -37,56 +57,48 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       const p = Math.min(absDist / maxDist, 1);
       const dir = dist > 0 ? 1 : dist < 0 ? -1 : 0;
 
-      const rotateY = dir * p * 15;
-      const translateZ = -p * 60;
-      const scale = 1 - p * 0.08;
-
-      card.style.transform = `perspective(800px) rotateY(${rotateY}deg) translateZ(${translateZ}px) scale(${scale})`;
+      card.style.transform = `perspective(800px) rotateY(${dir * p * 15}deg) translateZ(${-p * 60}px) scale(${1 - p * 0.08})`;
       card.style.zIndex = Math.round((1 - p) * 10).toString();
     }
   }, []);
 
-  const updateIndicators = useCallback(() => {
-    const viewport = viewportRef.current;
-    const track = trackRef.current;
-    if (!viewport || !track || track.children.length === 0) return;
-
-    const first = track.children[0] as HTMLElement;
-    const step = first.offsetWidth + 16;
-    const firstLeft = first.offsetLeft;
-    const idx = Math.round((viewport.scrollLeft + viewport.clientWidth / 2 - firstLeft) / step);
-    setActiveIndex(Math.max(0, Math.min(idx, combos.length - 1)));
-
-    const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-    setHasOverflow(maxScroll > 0);
-    setProgress(maxScroll > 0 ? (viewport.scrollLeft / maxScroll) * 100 : 0);
-  }, [combos.length]);
-
-  const onScroll = useCallback(() => {
-    applyTransforms();
-    updateIndicators();
-  }, [applyTransforms, updateIndicators]);
-
   useEffect(() => {
     const vp = viewportRef.current;
     if (!vp) return;
+
+    let t: NodeJS.Timeout;
+    const onScroll = () => {
+      applyTransforms();
+      clearTimeout(t);
+      t = setTimeout(snapToNearest, 100);
+    };
+
     vp.addEventListener("scroll", onScroll, { passive: true });
-    return () => vp.removeEventListener("scroll", onScroll);
-  }, [onScroll]);
+    return () => {
+      vp.removeEventListener("scroll", onScroll);
+      clearTimeout(t);
+    };
+  }, [applyTransforms, snapToNearest]);
 
   useEffect(() => {
     applyTransforms();
-    updateIndicators();
-  }, [applyTransforms, updateIndicators]);
+
+    const vp = viewportRef.current;
+    const track = trackRef.current;
+    if (vp && track && track.children.length > 0) {
+      const first = track.children[0] as HTMLElement;
+      const target = first.offsetLeft + first.offsetWidth / 2 - vp.clientWidth / 2;
+      if (Math.abs(vp.scrollLeft - target) > 2) {
+        vp.scrollLeft = target;
+      }
+    }
+  }, [applyTransforms]);
 
   useEffect(() => {
-    const onResize = () => {
-      applyTransforms();
-      updateIndicators();
-    };
+    const onResize = () => applyTransforms();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [applyTransforms, updateIndicators]);
+  }, [applyTransforms]);
 
   useEffect(() => {
     const vp = viewportRef.current;
@@ -99,7 +111,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     const onDown = (e: PointerEvent) => {
       if (!e.isPrimary || e.pointerType !== "mouse") return;
       isDown = true;
-      isDragging.current = true;
       startX = e.clientX;
       scrollStart = vp.scrollLeft;
       vp.setPointerCapture(e.pointerId);
@@ -111,8 +122,9 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     };
 
     const onUp = () => {
+      if (!isDown) return;
       isDown = false;
-      isDragging.current = false;
+      snapToNearest();
     };
 
     vp.addEventListener("pointerdown", onDown);
@@ -124,7 +136,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-  }, []);
+  }, [snapToNearest]);
 
   if (combos.length === 0) return null;
 
@@ -136,23 +148,16 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         </h2>
 
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-16 z-20 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-16 z-20 bg-gradient-to-l from-white to-transparent" />
-
           <div
             ref={viewportRef}
             className="overflow-x-auto overflow-y-hidden cursor-grab select-none scrollbar-none"
-            style={{
-              scrollSnapType: "x mandatory",
-              WebkitOverflowScrolling: "touch",
-            }}
+            style={{ WebkitOverflowScrolling: "touch" }}
           >
             <div ref={trackRef} className="flex gap-4 pb-4">
               {combos.map((combo) => (
                 <div
                   key={combo.id}
                   className="flex-shrink-0 w-[65vw] sm:w-[260px]"
-                  style={{ scrollSnapAlign: "center" }}
                 >
                   <ComboCard
                     id={combo.id}
@@ -166,15 +171,6 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             </div>
           </div>
         </div>
-
-        {hasOverflow && (
-          <div className="mt-6 h-1.5 bg-[var(--primary-light)]/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--primary)] rounded-full transition-[width] duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        )}
       </div>
     </section>
   );
