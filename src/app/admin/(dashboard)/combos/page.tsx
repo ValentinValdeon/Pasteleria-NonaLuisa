@@ -295,9 +295,9 @@ export default function CombosPage() {
         </button>
       </div>
 
-      <div className="flex items-center justify-end mb-6">
+      <div className="flex items-center justify-start mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[var(--accent)]">{filterStatus ? "Disponibles" : "No disponibles"}</span>
+          <span className="text-base font-medium text-[var(--accent)]">{filterStatus ? "Disponibles" : "No disponibles"}</span>
           <button
             onClick={() => setFilterStatus(!filterStatus)}
             className={`relative w-11 h-6 rounded-full transition-colors ${

@@ -151,7 +151,7 @@ export default function CategoriasPage() {
         </h1>
         <button
           onClick={openCreate}
-          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors"
+          className="p-2 min-h-[44px] min-w-[44px] rounded-full bg-[var(--primary)] text-white hover:bg-[var(--accent)] transition-colors flex items-center justify-center"
           title="Nueva categoría"
         >
           <GridPlusIcon />
@@ -183,18 +183,11 @@ export default function CategoriasPage() {
               onClick={() => setPreview(cat)}
               className="bg-white rounded-xl border border-[var(--primary-light)]/20 p-4 shadow-sm flex items-center justify-between gap-4 cursor-pointer hover:bg-[var(--primary-light)]/5 transition-colors"
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                {getImageUrl(cat.image_url, 80, 60) ? (
-                  <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-[var(--primary-light)]/20">
-                    <img src={getImageUrl(cat.image_url, 80, 60)!} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                ) : null}
-                <div className="min-w-0">
-                  <p className="font-semibold text-[var(--foreground)] text-base">{cat.name}</p>
-                  {cat.description && (
-                    <p className="text-sm text-[var(--accent)] truncate">{cat.description}</p>
-                  )}
-                </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-[var(--foreground)] text-base">{cat.name}</p>
+                {cat.description && (
+                  <p className="text-sm text-[var(--accent)] truncate">{cat.description}</p>
+                )}
               </div>
               <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                 <button
