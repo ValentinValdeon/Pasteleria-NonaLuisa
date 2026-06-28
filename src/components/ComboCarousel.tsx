@@ -251,7 +251,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
           Combos Destacados
         </h2>
-        <div className="relative pt-4">
+        <div className="relative pt-4 min-h-[480px]">
           <div
             ref={viewportRef}
             className="overflow-hidden cursor-grab select-none min-h-[480px]"
