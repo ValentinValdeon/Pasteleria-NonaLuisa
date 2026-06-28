@@ -369,9 +369,6 @@ export default function CombosPage() {
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="font-bold text-[var(--primary)] text-sm">{formatPrice(combo.price)}</span>
-                    <span className="text-xs text-[var(--accent)] bg-[var(--primary-light)]/20 px-2 py-0.5 rounded-full">
-                      {combo.items.length} {combo.items.length === 1 ? "producto" : "productos"}
-                    </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -530,8 +527,16 @@ export default function CombosPage() {
                           <input
                             type="number"
                             min="1"
-                            value={entry.quantity}
-                            onChange={(e) => updateItemEntry(index, "quantity", Math.max(1, parseInt(e.target.value) || 1))}
+                            value={entry.quantity || ""}
+                            onChange={(e) => {
+                              const raw = e.target.value;
+                              updateItemEntry(index, "quantity", raw === "" ? 0 : parseInt(raw) || 0);
+                            }}
+                            onBlur={() => {
+                              if (modal.items[index].quantity < 1) {
+                                updateItemEntry(index, "quantity", 1);
+                              }
+                            }}
                             className="w-16 px-2 py-2 rounded-lg border border-[var(--primary-light)] text-sm text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] transition-colors text-center"
                           />
                           <button
