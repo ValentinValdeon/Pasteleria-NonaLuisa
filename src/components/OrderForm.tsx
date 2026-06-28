@@ -3,20 +3,19 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { createClient } from "@/lib/supabase/client";
-import { formatPrice } from "@/lib/utils";
 
 interface OrderFormProps {
   onSuccess: () => void;
+  onOrderSent: () => void;
   deliveryPrice: number;
 }
 
-export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) {
-  const { items, totalPrice, clearCart } = useCart();
+export default function OrderForm({ onSuccess, onOrderSent, deliveryPrice }: OrderFormProps) {
+  const { items, totalPrice } = useCart();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [delivery, setDelivery] = useState(false);
   const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,7 +60,7 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
       const { error: itemsErr } = await supabase.from("order_items").insert(orderItems);
       if (itemsErr) throw itemsErr;
 
-      setSent(true);
+      onOrderSent();
     } catch (err) {
       console.error(err);
       setError("Error al enviar el pedido. Intentá de nuevo.");
@@ -69,29 +68,6 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
       setSending(false);
     }
   };
-
-  const handleClose = () => {
-    clearCart();
-    onSuccess();
-  };
-
-  if (sent) {
-    return (
-      <div className="text-center py-4">
-        <svg className="w-12 h-12 mx-auto mb-2 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-        <p className="font-semibold text-[var(--foreground)]">Pedido enviado con éxito</p>
-        <p className="text-sm text-[var(--accent)] mt-1">Pronto recibirás una respuesta a tu número de teléfono</p>
-        <button
-          onClick={handleClose}
-          className="mt-4 bg-[var(--primary)] text-white px-6 py-2.5 min-h-[44px] rounded-full font-semibold text-sm"
-        >
-          Cerrar
-        </button>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">

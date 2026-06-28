@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import QuantitySelector from "./QuantitySelector";
 import OrderForm from "./OrderForm";
@@ -12,7 +14,16 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ open, onClose, deliveryPrice }: CartDrawerProps) {
-  const { items, removeItem, updateQuantity, totalPrice } = useCart();
+  const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
+  const [orderSent, setOrderSent] = useState(false);
+  const router = useRouter();
+
+  const handleCloseSuccess = () => {
+    clearCart();
+    setOrderSent(false);
+    onClose();
+    router.push("/");
+  };
 
   return (
     <>
@@ -99,10 +110,28 @@ export default function CartDrawer({ open, onClose, deliveryPrice }: CartDrawerP
                 {formatPrice(totalPrice + (deliveryPrice > 0 ? deliveryPrice : 0))}
               </span>
             </div>
-            <OrderForm onSuccess={onClose} deliveryPrice={deliveryPrice} />
+            <OrderForm onSuccess={onClose} onOrderSent={() => setOrderSent(true)} deliveryPrice={deliveryPrice} />
           </div>
         )}
       </div>
+
+      {orderSent && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <svg className="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <p className="text-lg font-bold text-[var(--foreground)]">Pedido enviado con éxito</p>
+            <p className="text-sm text-[var(--accent)] mt-2">Pronto recibirás una respuesta a tu número de teléfono</p>
+            <button
+              onClick={handleCloseSuccess}
+              className="mt-6 w-full bg-[var(--primary)] text-white py-3 min-h-[44px] rounded-full font-semibold text-sm"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
