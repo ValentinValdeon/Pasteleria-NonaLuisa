@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
@@ -18,30 +17,15 @@ interface ComboCarouselProps {
 }
 
 export default function ComboCarousel({ combos }: ComboCarouselProps) {
-  const [showHint, setShowHint] = useState(true);
-
-  useEffect(() => {
-    if (combos.length === 0) return;
-    const id = setTimeout(() => setShowHint(false), 8000);
-    return () => clearTimeout(id);
-  }, [combos.length]);
-
   return (
     <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center gap-3 mb-6">
-          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)]">
-            Combos Destacados
-          </h2>
-          <span
-            className={`text-xs font-semibold text-[var(--primary)] bg-[var(--primary)]/10 px-2.5 py-1 rounded-full transition-opacity duration-500 ${
-              showHint ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            Desliza →
-          </span>
-        </div>
+        <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+          Combos Destacados
+        </h2>
         <div className="relative">
+          <div className="absolute left-0 top-0 bottom-4 w-16 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-4 w-16 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
           <Swiper
             effect="coverflow"
             centeredSlides
