@@ -240,15 +240,20 @@ export default function CombosPage() {
     setUploading(false);
   };
 
-  const toggleAvailable = (combo: ComboWithItems) => {
+  const toggleAvailable = async (combo: ComboWithItems) => {
     const next = !combo.available;
+    const prev = combos;
     setCombos((prev) =>
       prev.map((c) =>
         c.id === combo.id ? { ...c, available: next } : c
       )
     );
     addToast(next ? "Combo habilitado" : "Combo deshabilitado");
-    supabase.from("combos").update({ available: next }).eq("id", combo.id);
+    const { error } = await supabase.from("combos").update({ available: next }).eq("id", combo.id);
+    if (error) {
+      setCombos(prev);
+      addToast("Error al actualizar", "error");
+    }
   };
 
   const filtered = combos.filter((c) => {

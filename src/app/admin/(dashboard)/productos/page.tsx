@@ -201,15 +201,20 @@ export default function ProductosPage() {
     setUploading(false);
   };
 
-  const toggleAvailable = (product: Product) => {
+  const toggleAvailable = async (product: Product) => {
     const next = !product.available;
+    const prev = products;
     setProducts((prev) =>
       prev.map((p) =>
         p.id === product.id ? { ...p, available: next } : p
       )
     );
     addToast(next ? "Producto habilitado" : "Producto deshabilitado");
-    supabase.from("products").update({ available: next }).eq("id", product.id);
+    const { error } = await supabase.from("products").update({ available: next }).eq("id", product.id);
+    if (error) {
+      setProducts(prev);
+      addToast("Error al actualizar", "error");
+    }
   };
 
   const filtered = products.filter((p) => {
