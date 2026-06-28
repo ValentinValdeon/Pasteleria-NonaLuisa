@@ -61,7 +61,6 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
       const { error: itemsErr } = await supabase.from("order_items").insert(orderItems);
       if (itemsErr) throw itemsErr;
 
-      clearCart();
       setSent(true);
     } catch (err) {
       console.error(err);
@@ -69,6 +68,11 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
     } finally {
       setSending(false);
     }
+  };
+
+  const handleClose = () => {
+    clearCart();
+    onSuccess();
   };
 
   if (sent) {
@@ -79,6 +83,12 @@ export default function OrderForm({ onSuccess, deliveryPrice }: OrderFormProps) 
         </svg>
         <p className="font-semibold text-[var(--foreground)]">Pedido enviado con éxito</p>
         <p className="text-sm text-[var(--accent)] mt-1">Pronto recibirás una respuesta a tu número de teléfono</p>
+        <button
+          onClick={handleClose}
+          className="mt-4 bg-[var(--primary)] text-white px-6 py-2.5 min-h-[44px] rounded-full font-semibold text-sm"
+        >
+          Cerrar
+        </button>
       </div>
     );
   }
