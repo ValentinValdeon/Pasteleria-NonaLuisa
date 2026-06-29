@@ -65,7 +65,7 @@ export default function ComboCard({ id, name, description, price, image_url, com
         <div className="mt-auto pt-3 flex justify-end">
           <button
             onClick={handleAdd}
-            className="relative overflow-hidden min-h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-5 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors"
+            className="relative overflow-hidden h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-5 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors"
           >
             <div
               className="transition-transform duration-300"

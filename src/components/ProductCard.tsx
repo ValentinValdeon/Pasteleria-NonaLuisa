@@ -61,7 +61,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAdd}
             disabled={!product.available}
-            className="relative overflow-hidden min-h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+            className="relative overflow-hidden h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
           >
             <div
               className="transition-transform duration-300"
