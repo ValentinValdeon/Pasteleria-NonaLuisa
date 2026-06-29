@@ -49,9 +49,9 @@ export default function Hero() {
         ))}
       </Swiper>
 
-      <div className="absolute inset-0 bg-black/60 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/60 z-10" />
 
-      <div className="absolute inset-0 z-20 p-4 pb-12">
+      <div className="absolute inset-0 z-20 p-4 pb-12 animate-fade-in">
         <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
             src="/logo-white.png"
