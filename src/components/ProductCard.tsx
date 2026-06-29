@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
@@ -16,9 +17,25 @@ function PlaceholderIcon() {
   );
 }
 
+function CheckIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+  );
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const imgSrc = getImageUrl(product.image_url, 300, 60);
+  const [adding, setAdding] = useState(false);
+
+  const handleAdd = () => {
+    if (adding || !product.available) return;
+    addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, type: "product" });
+    setAdding(true);
+    setTimeout(() => setAdding(false), 600);
+  };
 
   return (
     <article className="bg-white rounded-xl shadow-sm overflow-hidden border border-[var(--primary-light)]/20 flex flex-col hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
@@ -40,16 +57,35 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-semibold text-[var(--foreground)] text-sm leading-tight line-clamp-2">
           {product.name}
         </h3>
-        <div className="flex items-center justify-between mt-auto">
-          <span className="font-bold text-[var(--primary)] text-base">
-            {formatPrice(product.price)}
-          </span>
+        <div className="flex justify-end mt-auto">
           <button
-            onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, type: "product" })}
-            className="bg-[var(--primary)] text-white text-xs px-3 py-2 min-h-[44px] rounded-full hover:bg-[var(--accent)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
+            onClick={handleAdd}
             disabled={!product.available}
+            className="relative overflow-hidden min-h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
           >
-            {product.available ? "Agregar" : "Agotado"}
+            <div
+              className="transition-transform duration-300"
+              style={{ transform: adding ? "translateY(-50%)" : "translateY(0)" }}
+            >
+              {product.available ? (
+                <>
+                  <div className="flex items-center justify-center gap-1.5 h-[44px]">
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>{formatPrice(product.price)}</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 h-[44px]">
+                    <CheckIcon />
+                    <span>Agregado</span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-center gap-1.5 h-[44px]">
+                  <span className="text-xs">Agotado</span>
+                </div>
+              )}
+            </div>
           </button>
         </div>
       </div>
