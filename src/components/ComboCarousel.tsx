@@ -209,7 +209,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
             Combos Destacados
           </h2>
           <div className="flex justify-center gap-4 pt-4">
-            {combos.map((combo) => (
+            {combos.map((combo, i) => (
               <div
                 key={combo.id}
                 className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
@@ -220,6 +220,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
                   description={combo.description ?? ""}
                   price={Number(combo.price)}
                   image_url={combo.image_url}
+                  comboNumber={i + 1}
                 />
               </div>
             ))}
@@ -244,6 +245,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
                 description={combos[0].description ?? ""}
                 price={Number(combos[0].price)}
                 image_url={combos[0].image_url}
+                comboNumber={1}
               />
             </div>
           </div>
@@ -272,7 +274,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
               ref={trackRef}
               className="flex gap-4 will-change-transform flex-shrink-0"
             >
-              {extended.map((combo) => (
+              {extended.map((combo, idx) => (
                 <div
                   key={combo._key}
                   className="flex-shrink-0 w-[65vw] sm:w-[260px] h-[300px]"
@@ -283,6 +285,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
                     description={combo.description ?? ""}
                     price={Number(combo.price)}
                     image_url={combo.image_url}
+                    comboNumber={idx === 0 ? TOTAL : idx === TOTAL + 1 ? 1 : idx}
                   />
                 </div>
               ))}

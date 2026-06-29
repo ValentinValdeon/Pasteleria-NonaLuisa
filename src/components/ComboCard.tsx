@@ -9,6 +9,7 @@ interface ComboCardProps {
   description: string;
   price: number;
   image_url: string | null;
+  comboNumber?: number;
 }
 
 function ComboPlaceholder() {
@@ -19,7 +20,7 @@ function ComboPlaceholder() {
   );
 }
 
-export default function ComboCard({ id, name, description, price, image_url }: ComboCardProps) {
+export default function ComboCard({ id, name, description, price, image_url, comboNumber }: ComboCardProps) {
   const { addItem } = useCart();
   const imgSrc = getImageUrl(image_url, 300, 60);
 
@@ -34,7 +35,7 @@ export default function ComboCard({ id, name, description, price, image_url }: C
           </div>
         )}
         <span className="absolute top-2 right-2 bg-[var(--primary)] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          Combo
+          {comboNumber ? `Combo ${comboNumber}` : "Combo"}
         </span>
       </div>
       <div className="p-4 flex flex-col flex-1">

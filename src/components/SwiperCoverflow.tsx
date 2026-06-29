@@ -41,10 +41,10 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           }}
           className="!pb-4"
         >
-          {combos.map((combo) => (
+          {combos.map((combo, i) => (
             <SwiperSlide
               key={combo.id}
-              className="!w-[75vw] sm:!w-[300px] h-[350px]"
+              className="!w-[75vw] sm:!w-[400px] h-[350px]"
             >
               <ComboCard
                 id={combo.id}
@@ -52,6 +52,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
                 description={combo.description ?? ""}
                 price={Number(combo.price)}
                 image_url={combo.image_url}
+                comboNumber={i + 1}
               />
             </SwiperSlide>
           ))}
