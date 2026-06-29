@@ -30,6 +30,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           grabCursor
           slidesPerView="auto"
           spaceBetween={16}
+          loop
           modules={[EffectCoverflow]}
           coverflowEffect={{
             rotate: 15,
