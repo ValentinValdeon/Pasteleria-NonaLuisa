@@ -51,15 +51,17 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div className="absolute inset-0 z-20 p-4 pb-14 animate-logo-in">
-        <div className="relative h-full w-full max-w-2xl mx-auto">
-          <Image
-            src="/logo-white2-recort.png"
-            alt="Pastelería"
-            fill
-            className="object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.3)] object-[50%_60%]"
-            priority
-          />
+      <div className="absolute inset-0 z-20 p-4 pb-14 flex items-center justify-center">
+        <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 max-w-4xl w-full h-[85%] flex items-center justify-center animate-logo-in">
+          <div className="relative h-full w-full max-w-2xl mx-auto">
+            <Image
+              src="/logo-white2-recort.png"
+              alt="Pastelería"
+              fill
+              className="object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.3)] object-[50%_60%]"
+              priority
+            />
+          </div>
         </div>
       </div>
     </section>

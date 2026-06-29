@@ -44,7 +44,7 @@ export default function Header() {
               alt="Pastelería la Nona Luisa"
               width={200}
               height={81}
-              className="h-7 md:h-8 w-auto object-contain"
+              className="h-10 md:h-11 w-auto object-contain"
               priority
             />
           </a>
