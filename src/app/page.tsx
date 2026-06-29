@@ -2,6 +2,7 @@ import { createPublicClient } from "@/lib/supabase/server-public";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ComboCarousel from "@/components/ComboCarousel";
+import SwiperCoverflow from "@/components/SwiperCoverflow";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import CartWrapper from "@/components/CartWrapper";
@@ -47,6 +48,10 @@ export default async function Home() {
       <SectionDivider />
 
       {combos.length > 0 && <ComboCarousel combos={combos} />}
+
+      <SectionDivider />
+
+      {combos.length > 1 && <SwiperCoverflow combos={combos} />}
 
       <SectionDivider />
 
