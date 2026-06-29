@@ -54,7 +54,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-20 p-4 pb-12 animate-fade-in">
         <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
-            src="/logo-white.png"
+            src="/logo-white2.png"
             alt="Pastelería"
             fill
             className="object-contain"
