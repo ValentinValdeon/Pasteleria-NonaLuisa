@@ -57,7 +57,7 @@ export default function Hero() {
             src="/logo-white2-recort.png"
             alt="Pastelería"
             fill
-            className="object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.3)] object-[45%_59%]"
+            className="object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.3)] object-[48%_59%]"
             priority
           />
         </div>
