@@ -53,12 +53,14 @@ export default function Hero() {
 
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <div className="text-center px-4 max-w-2xl animate-fade-in">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold font-[family-name:var(--font-playfair)] text-white mb-3 md:mb-4">
-            Delicias Artesanales
-          </h1>
-          <p className="text-base md:text-xl text-white/90 mb-6 md:mb-8 max-w-md mx-auto">
-            Productos horneados con amor, todos los días
-          </p>
+          <Image
+            src="/logo-white.png"
+            alt="Pastelería"
+            width={400}
+            height={400}
+            className="mx-auto mb-6 md:mb-8 w-48 sm:w-56 md:w-80 h-auto"
+            priority
+          />
           <a
             href="#productos"
             className="inline-block bg-[var(--primary)] text-white px-8 py-3 rounded-full font-semibold hover:bg-[var(--accent)] transition-colors text-base md:text-lg"
