@@ -21,7 +21,7 @@ export default function CartButton({ onClick }: CartButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={`fixed bottom-6 right-6 z-40 bg-[var(--primary)] text-white w-16 h-16 rounded-full shadow-lg hover:bg-[var(--accent)] transition-all duration-300 flex items-center justify-center ${
+      className={`fixed bottom-6 right-6 z-40 bg-[var(--primary)] text-white w-16 h-16 rounded-full shadow-lg hover:bg-[var(--accent)] transition-all duration-300 flex items-center justify-center border-2 border-white/50 ${
         pulse ? "scale-110" : "scale-100"
       }`}
       aria-label="Abrir carrito"
