@@ -54,10 +54,10 @@ export default function Hero() {
       <div className="absolute inset-0 z-20 p-4 pb-12 animate-fade-in">
         <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
-            src="/logo-white2.png"
+            src="/logo-white2-recort.png"
             alt="Pastelería"
             fill
-            className="object-contain"
+            className="object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.3)]"
             priority
           />
         </div>
