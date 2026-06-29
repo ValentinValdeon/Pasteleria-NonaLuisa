@@ -79,6 +79,8 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           spaceBetween={GAP}
           loop
           speed={600}
+          threshold={3}
+          touchRatio={1.5}
           modules={[EffectCoverflow]}
           coverflowEffect={{
             rotate: 25,
