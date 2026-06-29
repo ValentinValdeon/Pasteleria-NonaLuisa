@@ -30,6 +30,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           grabCursor
           centeredSlides
           slidesPerView="auto"
+          spaceBetween={16}
           coverflowEffect={{
             rotate: 15,
             stretch: 0,
@@ -42,7 +43,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           {combos.map((combo) => (
             <SwiperSlide
               key={combo.id}
-              className="!w-[65vw] sm:!w-[260px]"
+              className="!w-[65vw] sm:!w-[260px] h-[300px]"
             >
               <ComboCard
                 id={combo.id}
