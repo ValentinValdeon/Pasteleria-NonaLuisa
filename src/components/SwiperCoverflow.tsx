@@ -33,10 +33,10 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           loop
           modules={[EffectCoverflow]}
           coverflowEffect={{
-            rotate: 15,
+            rotate: 25,
             stretch: 0,
-            depth: 60,
-            modifier: 1,
+            depth: 100,
+            modifier: 1.5,
             slideShadows: false,
           }}
           className="!pb-4"
@@ -44,7 +44,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           {combos.map((combo) => (
             <SwiperSlide
               key={combo.id}
-              className="!w-[65vw] sm:!w-[260px] h-[300px]"
+              className="!w-[75vw] sm:!w-[300px] h-[350px]"
             >
               <ComboCard
                 id={combo.id}
