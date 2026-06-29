@@ -45,7 +45,7 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/70 z-10" />
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 animate-bounce">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 animate-bounce">
         <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
