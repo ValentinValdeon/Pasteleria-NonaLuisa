@@ -61,7 +61,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAdd}
             disabled={!product.available}
-            className="relative overflow-hidden h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+            className={`relative overflow-hidden h-[44px] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+              adding
+                ? "bg-[var(--primary)] text-white"
+                : "bg-white text-[var(--primary)] hover:bg-[var(--primary-light)]/10 disabled:hover:bg-white"
+            }`}
           >
             <div
               className="transition-transform duration-300"
@@ -70,10 +74,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.available ? (
                 <>
                   <div className="flex items-center justify-center gap-1.5 h-[44px]">
-                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span>{formatPrice(product.price)}</span>
+                    <span className="text-[15px]">{formatPrice(product.price)}</span>
                   </div>
                   <div className="flex items-center justify-center gap-1.5 h-[44px]">
                     <CheckIcon />

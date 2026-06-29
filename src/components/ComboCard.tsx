@@ -65,17 +65,21 @@ export default function ComboCard({ id, name, description, price, image_url, com
         <div className="mt-auto pt-3 flex justify-end">
           <button
             onClick={handleAdd}
-            className="relative overflow-hidden h-[44px] bg-white text-[var(--primary)] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-5 font-semibold text-sm hover:bg-[var(--primary-light)]/10 transition-colors"
+            className={`relative overflow-hidden h-[44px] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-5 font-semibold text-sm transition-colors ${
+              adding
+                ? "bg-[var(--primary)] text-white"
+                : "bg-white text-[var(--primary)] hover:bg-[var(--primary-light)]/10"
+            }`}
           >
             <div
               className="transition-transform duration-300"
               style={{ transform: adding ? "translateY(-50%)" : "translateY(0)" }}
             >
               <div className="flex items-center justify-center gap-1.5 h-[44px]">
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span>{formatPrice(price)}</span>
+                <span className="text-[15px]">{formatPrice(price)}</span>
               </div>
               <div className="flex items-center justify-center gap-1.5 h-[44px]">
                 <CheckIcon />

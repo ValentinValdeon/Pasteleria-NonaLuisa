@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useReducer, useEffect, useCallback } from "react";
+import { createContext, useContext, useReducer, useEffect, useCallback, useState } from "react";
 import type { CartItem } from "@/lib/types";
 
 interface CartContextType {
@@ -11,6 +11,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  addVersion: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -65,6 +66,7 @@ function cartReducer(state: CartItem[], action: Action): CartItem[] {
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
+  const [addVersion, setAddVersion] = useState(0);
 
   useEffect(() => {
     try {
@@ -81,6 +83,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((item: Omit<CartItem, "quantity">) => {
     dispatch({ type: "ADD_ITEM", payload: item });
+    setAddVersion((v) => v + 1);
   }, []);
 
   const removeItem = useCallback((id: string, type: "product" | "combo") => {
@@ -103,7 +106,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice }}
+      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, addVersion }}
     >
       {children}
     </CartContext.Provider>
