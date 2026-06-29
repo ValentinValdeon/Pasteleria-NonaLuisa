@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 
 const HERO_IMAGES = [
@@ -21,14 +23,19 @@ const HERO_IMAGES = [
 ];
 
 export default function Hero() {
+  const swiperRef = useRef<SwiperType | null>(null);
+
   return (
     <section id="hero" className="relative h-[50vh] md:h-[70vh] overflow-hidden">
       <Swiper
+        onSwiper={(swiper) => { swiperRef.current = swiper; }}
         modules={[Autoplay]}
         loop
         speed={800}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         className="absolute inset-0 w-full h-full [&_.swiper-wrapper]:!h-full [&_.swiper-slide]:!h-full [&_.swiper-slide]:!relative"
+        onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
+        onMouseLeave={() => swiperRef.current?.autoplay?.start()}
       >
         {HERO_IMAGES.map((img, i) => (
           <SwiperSlide key={i}>
@@ -45,9 +52,9 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/70 z-10" />
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 animate-bounce">
-        <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 animate-wave">
+        <svg className="w-6 h-6 text-white/70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5" />
         </svg>
       </div>
 

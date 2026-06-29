@@ -8,29 +8,27 @@ import OrderForm from "./OrderForm";
 import { formatPrice } from "@/lib/utils";
 
 interface CartDrawerProps {
-  open: boolean;
-  onClose: () => void;
   deliveryPrice: number;
 }
 
-export default function CartDrawer({ open, onClose, deliveryPrice }: CartDrawerProps) {
-  const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
+export default function CartDrawer({ deliveryPrice }: CartDrawerProps) {
+  const { items, removeItem, updateQuantity, totalPrice, clearCart, cartDrawerOpen, closeCartDrawer } = useCart();
   const [orderSent, setOrderSent] = useState(false);
   const router = useRouter();
 
   const handleCloseSuccess = () => {
     clearCart();
     setOrderSent(false);
-    onClose();
+    closeCartDrawer();
     router.push("/");
   };
 
   return (
     <>
-      {open && <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />}
+      {cartDrawerOpen && <div className="fixed inset-0 z-50 bg-black/40" onClick={closeCartDrawer} />}
       <div
         className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-[var(--background)] shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col ${
-          open ? "translate-x-0" : "translate-x-full"
+          cartDrawerOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between px-4 h-14 md:h-16 border-b border-[var(--primary-light)]/30 shrink-0">
@@ -38,7 +36,7 @@ export default function CartDrawer({ open, onClose, deliveryPrice }: CartDrawerP
             Tu Pedido
           </h2>
           <button
-            onClick={onClose}
+            onClick={closeCartDrawer}
             className="p-2 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors"
             aria-label="Cerrar carrito"
           >
@@ -98,19 +96,11 @@ export default function CartDrawer({ open, onClose, deliveryPrice }: CartDrawerP
               <span>Subtotal</span>
               <span>{formatPrice(totalPrice)}</span>
             </div>
-            {deliveryPrice > 0 && (
-              <div className="flex justify-between text-sm text-[var(--accent)] mb-1">
-                <span>Envío</span>
-                <span>{formatPrice(deliveryPrice)}</span>
-              </div>
-            )}
-            <div className="flex justify-between font-bold text-[var(--foreground)] text-lg mb-4 pt-2 border-t border-[var(--primary-light)]/20">
+            <div className="flex justify-between font-bold text-[var(--foreground)] text-lg mb-2 pt-2 border-t border-[var(--primary-light)]/20">
               <span>Total</span>
-              <span className="text-[var(--primary)]">
-                {formatPrice(totalPrice + (deliveryPrice > 0 ? deliveryPrice : 0))}
-              </span>
+              <span className="text-[var(--primary)]">{formatPrice(totalPrice)}</span>
             </div>
-            <OrderForm onSuccess={onClose} onOrderSent={() => setOrderSent(true)} deliveryPrice={deliveryPrice} />
+            <OrderForm onSuccess={closeCartDrawer} onOrderSent={() => setOrderSent(true)} deliveryPrice={deliveryPrice} />
           </div>
         )}
       </div>

@@ -2,12 +2,21 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
 
 const NAV_LINKS = [
-  { href: "/", label: "Inicio" },
-  { href: "#productos", label: "Productos" },
-  { href: "/admin", label: "Admin" },
+  { href: "/", label: "Inicio", section: "hero" },
+  { href: "#productos", label: "Productos", section: "productos" },
+  { href: "/admin", label: "Admin", section: null },
 ];
+
+function CartIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+    </svg>
+  );
+}
 
 function HamburgerIcon() {
   return (
@@ -28,9 +37,20 @@ function CloseIcon() {
   );
 }
 
+function CartBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 leading-none">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
 export default function Header() {
+  const { totalItems, openCartDrawer } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
     const hero = document.getElementById("hero");
@@ -45,6 +65,26 @@ export default function Header() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const sections = ["hero", "productos"];
+    const observers: IntersectionObserver[] = [];
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { threshold: 0.3 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   return (
     <>
       <header
@@ -53,10 +93,7 @@ export default function Header() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
-          <a
-            href="/"
-            className="flex items-center shrink-0"
-          >
+          <a href="/" className="flex items-center shrink-0">
             <Image
               src="/logo-nombre-edit.png"
               alt="Pastelería la Nona Luisa"
@@ -68,32 +105,59 @@ export default function Header() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--accent)]">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="hover:text-[var(--primary)] transition-colors font-medium"
-              >
-                {link.label}
-              </a>
-            ))}
+          <nav className="hidden md:flex items-center gap-1 text-sm text-[var(--accent)]">
+            {NAV_LINKS.map((link) => {
+              const isActive = link.section === activeSection;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+                    isActive
+                      ? "text-[var(--primary)] bg-[var(--primary-light)]/25"
+                      : "hover:text-[var(--primary)] hover:bg-[var(--primary-light)]/10"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+            <button
+              onClick={openCartDrawer}
+              className="relative p-2.5 rounded-lg text-[var(--accent)] hover:text-[var(--primary)] hover:bg-[var(--primary-light)]/10 transition-colors cursor-pointer"
+              aria-label="Abrir carrito"
+            >
+              <CartIcon />
+              <CartBadge count={totalItems} />
+            </button>
           </nav>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="md:hidden p-2.5 text-[var(--foreground)]"
-            aria-label="Abrir menú"
-          >
-            <HamburgerIcon />
-          </button>
+          {/* Mobile actions */}
+          <div className="flex items-center gap-1 md:hidden">
+            <button
+              onClick={openCartDrawer}
+              className="relative p-2.5 text-[var(--foreground)] cursor-pointer"
+              aria-label="Abrir carrito"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg>
+              <CartBadge count={totalItems} />
+            </button>
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="p-2.5 text-[var(--foreground)] cursor-pointer"
+              aria-label="Abrir menú"
+            >
+              <HamburgerIcon />
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 md:hidden ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMenuOpen(false)}
@@ -101,33 +165,56 @@ export default function Header() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-72 bg-[var(--background)] shadow-xl transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 z-50 h-full w-80 bg-[var(--background)] shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--primary-light)]/30">
+        <div className="flex items-center justify-between px-5 h-14 border-b border-[var(--primary-light)]/30">
           <span className="text-base font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]">
             Menú
           </span>
           <button
             onClick={() => setMenuOpen(false)}
-            className="p-2 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors"
+            className="p-2 text-[var(--accent)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
             aria-label="Cerrar menú"
           >
             <CloseIcon />
           </button>
         </div>
-        <nav className="px-4 py-6 flex flex-col">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="block px-4 py-4 border-b border-[var(--primary-light)]/20 last:border-b-0 text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--primary)] transition-colors font-medium text-lg"
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav className="px-5 py-6 flex flex-col gap-1">
+          {NAV_LINKS.map((link) => {
+            const isActive = link.section === activeSection;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`block px-4 py-3.5 rounded-xl font-medium text-[15px] transition-colors ${
+                  isActive
+                    ? "bg-[var(--primary-light)]/25 text-[var(--primary)]"
+                    : "text-[var(--foreground)] hover:bg-[var(--primary-light)]/15 hover:text-[var(--primary)]"
+                }`}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+          <hr className="my-3 border-[var(--primary-light)]/20" />
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              openCartDrawer();
+            }}
+            className="flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium text-[15px] text-[var(--foreground)] hover:bg-[var(--primary-light)]/15 hover:text-[var(--primary)] transition-colors cursor-pointer w-full text-left"
+          >
+            <CartIcon />
+            <span>Carrito</span>
+            {totalItems > 0 && (
+              <span className="ml-auto bg-[var(--primary)] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                {totalItems}
+              </span>
+            )}
+          </button>
         </nav>
       </div>
     </>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { formatPrice, getImageUrl } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
+import QuantitySelector from "./QuantitySelector";
 
 interface ProductCardProps {
   product: Product;
@@ -29,11 +30,16 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const imgSrc = getImageUrl(product.image_url, 300, 60);
   const [adding, setAdding] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const handleAdd = () => {
     if (adding || !product.available) return;
-    addItem({ id: product.id, name: product.name, price: product.price, image_url: product.image_url, type: "product" });
+    addItem(
+      { id: product.id, name: product.name, price: product.price, image_url: product.image_url, type: "product" },
+      quantity
+    );
     setAdding(true);
+    setQuantity(1);
     setTimeout(() => setAdding(false), 600);
   };
 
@@ -48,7 +54,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
         {!product.available && (
-          <span className="absolute top-2 left-2 bg-red-500/90 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+          <span className="absolute top-2 left-2 bg-red-500/90 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm flex items-center gap-1">
+            <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
             No disponible
           </span>
         )}
@@ -57,11 +66,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-semibold text-[var(--foreground)] text-sm leading-tight line-clamp-2">
           {product.name}
         </h3>
-        <div className="flex justify-end mt-auto">
+        <p className="text-sm font-semibold text-[var(--primary)]">{formatPrice(product.price)}</p>
+        <div className="flex items-center justify-between mt-auto gap-2">
+          {product.available && (
+            <QuantitySelector value={quantity} onChange={setQuantity} min={0} />
+          )}
           <button
             onClick={handleAdd}
-            disabled={!product.available}
-            className={`relative overflow-hidden h-[44px] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+            disabled={!product.available || quantity === 0}
+            className={`relative overflow-hidden h-[44px] border-2 border-dashed border-[var(--primary)] rounded-l-full rounded-r-md px-4 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 ${
               adding
                 ? "bg-[var(--primary)] text-white"
                 : "bg-white text-[var(--primary)] hover:bg-[var(--primary-light)]/10 disabled:hover:bg-white"
@@ -77,7 +90,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span className="text-[15px]">{formatPrice(product.price)}</span>
+                    <span className="text-[15px]">Agregar</span>
                   </div>
                   <div className="flex items-center justify-center gap-1.5 h-[44px]">
                     <CheckIcon />

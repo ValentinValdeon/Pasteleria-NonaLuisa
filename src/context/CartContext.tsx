@@ -5,19 +5,22 @@ import type { CartItem } from "@/lib/types";
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">) => void;
+  addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeItem: (id: string, type: "product" | "combo") => void;
   updateQuantity: (id: string, type: "product" | "combo", quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
   addVersion: number;
+  cartDrawerOpen: boolean;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
 
 type Action =
-  | { type: "ADD_ITEM"; payload: Omit<CartItem, "quantity"> }
+  | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: { id: string; type: "product" | "combo" } }
   | { type: "UPDATE_QUANTITY"; payload: { id: string; type: "product" | "combo"; quantity: number } }
   | { type: "CLEAR" }
@@ -29,15 +32,15 @@ function cartReducer(state: CartItem[], action: Action): CartItem[] {
   switch (action.type) {
     case "ADD_ITEM": {
       const key = (i: CartItem) => `${i.id}-${i.type}`;
-      const existing = state.find((i) => key(i) === key(action.payload as CartItem));
+      const existing = state.find((i) => key(i) === key(action.payload));
       if (existing) {
         return state.map((i) =>
           key(i) === key(existing)
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, quantity: i.quantity + action.payload.quantity }
             : i
         );
       }
-      return [...state, { ...action.payload, quantity: 1 }];
+      return [...state, action.payload];
     }
     case "REMOVE_ITEM":
       return state.filter(
@@ -67,6 +70,10 @@ function cartReducer(state: CartItem[], action: Action): CartItem[] {
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
   const [addVersion, setAddVersion] = useState(0);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+
+  const openCartDrawer = useCallback(() => setCartDrawerOpen(true), []);
+  const closeCartDrawer = useCallback(() => setCartDrawerOpen(false), []);
 
   useEffect(() => {
     try {
@@ -81,8 +88,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch { /* empty */ }
   }, [items]);
 
-  const addItem = useCallback((item: Omit<CartItem, "quantity">) => {
-    dispatch({ type: "ADD_ITEM", payload: item });
+  const addItem = useCallback((item: Omit<CartItem, "quantity">, quantity: number = 1) => {
+    dispatch({ type: "ADD_ITEM", payload: { ...item, quantity } });
     setAddVersion((v) => v + 1);
   }, []);
 
@@ -106,7 +113,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, addVersion }}
+      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, addVersion, cartDrawerOpen, openCartDrawer, closeCartDrawer }}
     >
       {children}
     </CartContext.Provider>
