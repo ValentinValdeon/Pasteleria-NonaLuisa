@@ -22,7 +22,7 @@ const HERO_IMAGES = [
 
 export default function Hero() {
   return (
-    <section className="relative h-[50vh] md:h-[70vh] overflow-hidden">
+    <section id="hero" className="relative h-[50vh] md:h-[70vh] overflow-hidden">
       <Swiper
         modules={[Autoplay]}
         loop

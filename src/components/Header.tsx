@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
   { href: "/", label: "Inicio" },
@@ -30,10 +30,28 @@ function CloseIcon() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-[var(--background)]/95 backdrop-blur-sm border-b border-[var(--primary-light)]/30">
+      <header
+        className={`fixed top-0 z-30 w-full bg-[var(--background)]/95 backdrop-blur-sm border-b border-[var(--primary-light)]/30 transition-transform duration-500 ${
+          visible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           <a
             href="/"
@@ -88,7 +106,7 @@ export default function Header() {
         }`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--primary-light)]/30">
-          <span className="text-sm font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]">
+          <span className="text-base font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]">
             Menú
           </span>
           <button
@@ -99,13 +117,13 @@ export default function Header() {
             <CloseIcon />
           </button>
         </div>
-        <nav className="px-4 py-4 flex flex-col gap-1">
+        <nav className="px-4 py-6 flex flex-col gap-2">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="block px-3 py-3 rounded-lg text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--primary)] transition-colors font-medium text-sm"
+              className="block px-4 py-4 rounded-lg text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--primary)] transition-colors font-medium text-lg"
             >
               {link.label}
             </a>
