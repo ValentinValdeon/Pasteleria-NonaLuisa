@@ -51,7 +51,7 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div className="absolute inset-0 z-20 p-4 pb-14 animate-fade-in">
+      <div className="absolute inset-0 z-20 p-4 pb-14 animate-logo-in">
         <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
             src="/logo-white2-recort.png"

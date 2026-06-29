@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 const NAV_LINKS = [
@@ -36,9 +37,16 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           <a
             href="/"
-            className="text-lg md:text-xl font-bold font-[family-name:var(--font-playfair)] text-[var(--primary)]"
+            className="flex items-center shrink-0"
           >
-            Pastelería la Nona Luisa
+            <Image
+              src="/logo-nombre-edit.png"
+              alt="Pastelería la Nona Luisa"
+              width={200}
+              height={81}
+              className="h-7 md:h-8 w-auto object-contain"
+              priority
+            />
           </a>
 
           {/* Desktop nav */}
