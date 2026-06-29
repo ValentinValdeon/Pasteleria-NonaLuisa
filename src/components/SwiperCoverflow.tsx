@@ -28,9 +28,9 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
         <Swiper
           effect="coverflow"
           grabCursor
-          centeredSlides
           slidesPerView="auto"
           spaceBetween={16}
+          modules={[EffectCoverflow]}
           coverflowEffect={{
             rotate: 15,
             stretch: 0,
