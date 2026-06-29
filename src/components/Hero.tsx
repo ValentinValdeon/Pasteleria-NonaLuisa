@@ -51,14 +51,13 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/60 z-10" />
 
-      <div className="absolute inset-0 z-20 flex items-center justify-center">
-        <div className="text-center px-4 max-w-2xl animate-fade-in">
+      <div className="absolute inset-0 z-20 flex justify-center p-4 pb-16">
+        <div className="relative h-full w-full max-w-4xl">
           <Image
             src="/logo-white.png"
             alt="Pastelería"
-            width={550}
-            height={550}
-            className="mx-auto w-72 sm:w-96 md:w-[450px] lg:w-[550px] h-auto"
+            fill
+            className="object-contain"
             priority
           />
         </div>
