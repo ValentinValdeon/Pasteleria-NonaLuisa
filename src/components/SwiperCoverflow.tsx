@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
@@ -16,12 +17,58 @@ interface SwiperCoverflowProps {
   }>;
 }
 
+const GAP = 16;
+
 export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
-  if (combos.length === 0) return null;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [fitAll, setFitAll] = useState(false);
+  const TOTAL = combos.length;
+
+  useEffect(() => {
+    const check = () => {
+      const cw = window.innerWidth < 640 ? window.innerWidth * 0.75 : 300;
+      const totalW = TOTAL * (cw + GAP) - GAP;
+      setFitAll(totalW <= (containerRef.current?.clientWidth ?? window.innerWidth));
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [TOTAL]);
+
+  if (TOTAL === 0) return null;
+
+  if (fitAll) {
+    return (
+      <section className="py-16 bg-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
+            Combos (Swiper)
+          </h2>
+          <div className="flex justify-center gap-4 pt-4">
+            {combos.map((combo, i) => (
+              <div
+                key={combo.id}
+                className="flex-shrink-0 w-[75vw] sm:w-[300px] h-[350px]"
+              >
+                <ComboCard
+                  id={combo.id}
+                  name={combo.name}
+                  description={combo.description ?? ""}
+                  price={Number(combo.price)}
+                  image_url={combo.image_url}
+                  comboNumber={i + 1}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-white overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
+      <div ref={containerRef} className="max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
           Combos (Swiper)
         </h2>
@@ -29,7 +76,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           effect="coverflow"
           grabCursor
           slidesPerView="auto"
-          spaceBetween={16}
+          spaceBetween={GAP}
           loop
           speed={600}
           modules={[EffectCoverflow]}
@@ -45,7 +92,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           {combos.map((combo, i) => (
             <SwiperSlide
               key={combo.id}
-              className="!w-[75vw] sm:!w-[400px] h-[350px]"
+              className="!w-[75vw] sm:!w-[300px] h-[350px]"
             >
               <ComboCard
                 id={combo.id}
