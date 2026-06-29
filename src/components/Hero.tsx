@@ -51,10 +51,10 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-black/60 z-10" />
 
-      <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
-        <div className="relative h-full w-full max-w-2xl">
+      <div className="absolute inset-0 z-20 p-4 pb-12">
+        <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
-            src="/logo-white-v2.png"
+            src="/logo-white.png"
             alt="Pastelería"
             fill
             className="object-contain"
