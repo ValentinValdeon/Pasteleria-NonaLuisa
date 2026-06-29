@@ -56,17 +56,11 @@ export default function Hero() {
           <Image
             src="/logo-white.png"
             alt="Pastelería"
-            width={400}
-            height={400}
-            className="mx-auto mb-6 md:mb-8 w-48 sm:w-56 md:w-80 h-auto"
+            width={550}
+            height={550}
+            className="mx-auto w-72 sm:w-96 md:w-[450px] lg:w-[550px] h-auto"
             priority
           />
-          <a
-            href="#productos"
-            className="inline-block bg-[var(--primary)] text-white px-8 py-3 rounded-full font-semibold hover:bg-[var(--accent)] transition-colors text-base md:text-lg"
-          >
-            Ver Productos
-          </a>
         </div>
       </div>
     </section>
