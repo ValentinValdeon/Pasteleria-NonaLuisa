@@ -43,7 +43,7 @@ export default function Hero() {
         ))}
       </Swiper>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/60 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/70 z-10" />
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 animate-bounce">
         <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div className="absolute inset-0 z-20 p-4 animate-fade-in">
+      <div className="absolute inset-0 z-20 p-4 pb-14 animate-fade-in">
         <div className="relative h-full w-full max-w-2xl mx-auto">
           <Image
             src="/logo-white2-recort.png"
