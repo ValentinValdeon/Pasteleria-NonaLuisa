@@ -2,6 +2,7 @@
 
 import { useRef, useCallback, useEffect, useState } from "react";
 import ComboCard from "./ComboCard";
+import { getImageUrl } from "@/lib/utils";
 
 interface ComboCarouselProps {
   combos: Array<{
@@ -35,6 +36,16 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, [TOTAL]);
+
+  useEffect(() => {
+    combos.forEach((combo) => {
+      const src = getImageUrl(combo.image_url, 300, 60);
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, [combos]);
 
   const getCardWidth = useCallback((): number => {
     if (!trackRef.current || trackRef.current.children.length === 0) return 260;
@@ -254,7 +265,7 @@ export default function ComboCarousel({ combos }: ComboCarouselProps) {
         <div className="relative">
           <div
             ref={viewportRef}
-            className="overflow-hidden cursor-grab select-none min-h-[480px] flex items-center"
+            className="overflow-hidden cursor-grab select-none min-h-[360px] flex items-center"
             style={{ touchAction: "pan-y" }}
           >
             <div
