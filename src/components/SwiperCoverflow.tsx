@@ -42,7 +42,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
       <section className="py-16 bg-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
-            Combos (Swiper)
+            Combos Destacados
           </h2>
           <div className="flex justify-center gap-4 pt-4">
             {combos.map((combo, i) => (
@@ -70,7 +70,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
     <section className="py-16 bg-white overflow-hidden">
       <div ref={containerRef} className="max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-6">
-          Combos (Swiper)
+          Combos Destacados
         </h2>
         <Swiper
           effect="coverflow"
