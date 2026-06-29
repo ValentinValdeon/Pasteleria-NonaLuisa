@@ -20,6 +20,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Pastelería - Delicias Artesanales",
   description: "Catálogo de productos artesanales de panadería y pastelería",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({
