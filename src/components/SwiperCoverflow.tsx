@@ -48,7 +48,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
             {combos.map((combo, i) => (
               <div
                 key={combo.id}
-                className="flex-shrink-0 w-[75vw] sm:w-[300px] h-[350px]"
+                className="flex-shrink-0 w-[75vw] sm:w-[300px] h-[400px]"
               >
                 <ComboCard
                   id={combo.id}
@@ -92,7 +92,7 @@ export default function SwiperCoverflow({ combos }: SwiperCoverflowProps) {
           {combos.map((combo, i) => (
             <SwiperSlide
               key={combo.id}
-              className="!w-[75vw] sm:!w-[300px] h-[350px]"
+              className="!w-[75vw] sm:!w-[300px] h-[400px]"
             >
               <ComboCard
                 id={combo.id}

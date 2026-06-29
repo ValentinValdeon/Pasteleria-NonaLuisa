@@ -26,7 +26,7 @@ export default function ComboCard({ id, name, description, price, image_url, com
 
   return (
     <article className="bg-white rounded-xl shadow-md overflow-hidden border-2 border-[var(--primary)]/20 flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 max-w-full h-full">
-      <div className="h-36 bg-gradient-to-br from-[var(--primary-light)]/40 to-[var(--primary)]/20 overflow-hidden relative">
+      <div className="h-44 bg-gradient-to-br from-[var(--primary-light)]/40 to-[var(--primary)]/20 overflow-hidden relative">
         {imgSrc ? (
           <img src={imgSrc} alt={name} className="w-full h-full object-cover" loading="eager" />
         ) : (
