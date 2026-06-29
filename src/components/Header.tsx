@@ -52,7 +52,7 @@ export default function Header() {
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
           <a
             href="/"
             className="flex items-center shrink-0"
@@ -62,7 +62,7 @@ export default function Header() {
               alt="Pastelería la Nona Luisa"
               width={200}
               height={81}
-              className="h-10 md:h-11 w-auto object-contain"
+              className="h-12 md:h-14 w-auto object-contain"
               priority
             />
           </a>
@@ -117,13 +117,13 @@ export default function Header() {
             <CloseIcon />
           </button>
         </div>
-        <nav className="px-4 py-6 flex flex-col gap-2">
+        <nav className="px-4 py-6 flex flex-col">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="block px-4 py-4 rounded-lg text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--primary)] transition-colors font-medium text-lg"
+              className="block px-4 py-4 border-b border-[var(--primary-light)]/20 last:border-b-0 text-[var(--accent)] hover:bg-[var(--primary-light)]/20 hover:text-[var(--primary)] transition-colors font-medium text-lg"
             >
               {link.label}
             </a>
