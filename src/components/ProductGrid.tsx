@@ -12,28 +12,16 @@ interface ProductGridProps {
 
 export default function ProductGrid({ products, categories }: ProductGridProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
 
-  const filtered = products.filter((p) => {
-    const matchesCategory = activeCategory ? p.category_id === activeCategory : true;
-    const matchesSearch = search
-      ? p.name.toLowerCase().includes(search.toLowerCase())
-      : true;
-    return matchesCategory && matchesSearch;
-  });
+  const filtered = activeCategory
+    ? products.filter((p) => p.category_id === activeCategory)
+    : products;
 
   return (
     <section id="productos" className="max-w-6xl mx-auto px-4 py-10 md:py-16 animate-slide-up">
       <h2 className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-playfair)] text-[var(--foreground)] mb-5 md:mb-6">
         Nuestros Productos
       </h2>
-      <input
-        type="text"
-        placeholder="Buscar producto..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full mb-4 px-4 py-2.5 min-h-[44px] rounded-xl border border-[var(--primary-light)] bg-white text-sm text-[var(--foreground)] placeholder:text-[var(--accent)]/50 focus:outline-none focus:border-[var(--primary)] transition-colors"
-      />
       <CategoryFilter
         categories={categories}
         activeCategory={activeCategory}
