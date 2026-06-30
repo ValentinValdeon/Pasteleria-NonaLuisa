@@ -67,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
         <p className="text-sm font-semibold text-[var(--primary)]">{formatPrice(product.price)}</p>
-        <div className="flex items-center justify-between mt-auto gap-2">
+        <div className="flex items-center justify-end mt-auto gap-2 flex-wrap">
           {product.available && (
             <QuantitySelector value={quantity} onChange={setQuantity} min={0} />
           )}

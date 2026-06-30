@@ -10,7 +10,7 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ categories, activeCategory, onSelect }: CategoryFilterProps) {
   return (
-    <div className="flex md:flex-wrap gap-2 pb-2 overflow-x-auto md:overflow-x-visible flex-nowrap md:flex-wrap scrollbar-none">
+    <div className="flex md:flex-wrap gap-2 pb-2 overflow-x-auto md:overflow-x-visible flex-nowrap md:flex-wrap scrollbar-none max-w-full">
       <button
         onClick={() => onSelect(null)}
         className={`shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
